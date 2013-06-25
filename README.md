@@ -5,8 +5,8 @@ This is a test version of Wikt2Dict providing a simple environment to try its fe
 
 ## Installation
 1 Checkout the repository from GitHub to a directory with at lot of free space.
-    The amount of free space required depends on the number and size of Wiktionaries
-    you want to download (for all 40 you will need about 30GB).
+The amount of free space required depends on the number and size of Wiktionaries
+you want to download (for all 40 you will need about 30GB).
 
     git clone git@github.com:juditacs/wikt2dict.git
 
@@ -27,24 +27,24 @@ This is a test version of Wikt2Dict providing a simple environment to try its fe
 
 ## Configuration
 1 Set the list of Wiktionaries to work with.
-   We provide an example configuration file, cfg/main.cfg, with the full
-   configuration we used.
-   We also provide a defaults.cfg file with default parameters.
-   You can leave the configuration as it is if you do not want to parse an additional
-   Wiktionary.
+We provide an example configuration file, cfg/main.cfg, with the full
+configuration we used.
+We also provide a defaults.cfg file with default parameters.
+You can leave the configuration as it is if you do not want to parse an additional
+Wiktionary.
 
 2 Resource files
-   There are also example files in the res directory.
+There are also example files in the res directory.
 
-   res/wikicodes: the list of Wiktionary codes you want to collect translations in.
-       Right now this file contains all 50 languages we worked with.
-   res/wiktionaries.tsv: Wiktionary code - language name mapping for all Wiktionaries 
-       you want to parse. This is a tab-separated file.
+res/wikicodes: the list of Wiktionary codes you want to collect translations in.
+   Right now this file contains all 50 languages we worked with.
+res/wiktionaries.tsv: Wiktionary code - language name mapping for all Wiktionaries 
+   you want to parse. This is a tab-separated file.
 
 ## Parsing Wiktionaries
-    You will now download and parse the Latin Wiktionary. The environment is already set up.
-    We chose the Latin Wiktionary because it is small and for historical reasons, easy 
-    to understand many words for most European-language speakers.
+You will now download and parse the Latin Wiktionary. The environment is already set up.
+We chose the Latin Wiktionary because it is small and for historical reasons, easy 
+to understand many words for most European-language speakers.
     
 1 Create a langdirs.tsv containing nothing but the entity for the Latin Wiktionary.
 
@@ -55,10 +55,10 @@ This is a test version of Wikt2Dict providing a simple environment to try its fe
     cd bin
     bash download_wiktionaries.sh  ../res/wiktionaries.tsv ../dat/wiktionary
 
-    After the download finishes,
-    a Latin directory is created in ../dat/wiktionary and the dump should be there.
-    For downloading more than one Wiktionaries, you need to specify all languages in 
-    the langnames.tsv file one language-per-line.
+After the download finishes,
+a Latin directory is created in ../dat/wiktionary and the dump should be there.
+For downloading more than one Wiktionaries, you need to specify all languages in 
+the langnames.tsv file one language-per-line.
 
     If the download fails for some reason, delete the corrupted file before running it again:
     rm ../dat/wiktionary/Latin/lawiktionary-latest-pages-meta-current.xml
@@ -74,10 +74,10 @@ This is a test version of Wikt2Dict providing a simple environment to try its fe
 
     python extract_translations.py ../cfg/main.cfg la
 
-    The last parameter tells Wikt2Dict to extract the Latin Wiktionary.
+The last parameter tells Wikt2Dict to extract the Latin Wiktionary.
 
 5 Repeat the steps 1-4. with at least two other Wiktionaries of your choice. 
-    Preferrably chose Wiktionaries that have a section in the cfg/translations.cfg file.
+Preferrably chose Wiktionaries that have a section in the cfg/translations.cfg file.
 
 Congratulations, you have successfully finished the test tutorial of Wikt2Dict.
 Please send your feedback to judit@sch.bme.hu.
