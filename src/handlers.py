@@ -3,8 +3,19 @@ from sys import stderr
 import logging
 
 class ConfigHandler(object):
+    """ Configuration handler class
+    An instance of this class is created for all Wiktionary instances.
+    In the configuration file there should be a section named 'general'
+    and optionally a section named as the Wiktionary code of the
+    language. Parameters in the latter override parameters from the
+    general section. Another defaults file can be specified where
+    global defaults are placed. """
 
     def __init__(self, wc, cfg_fn):
+        """ 
+        @param wc: Wiktionary code
+        @param cfg_fn: path and name of the configuration file
+        """
         self.wc = wc
         c_parser = ConfigParser()
         c_parser.read(cfg_fn)
@@ -14,6 +25,8 @@ class ConfigHandler(object):
         self.convert_bool_params()
 
     def read_specific_config(self, c_parser):
+        """ Read the specific section named as the Wiktionary code
+        in the config file. """
         try:
             cfg_wc = dict([t for t in c_parser.items(self.wc)])
             self.cfg_wc = dict()
@@ -28,6 +41,7 @@ class ConfigHandler(object):
             stderr.write(e)
 
     def add_missing_params(self):
+        """ Read defaults file """
         f = open(self.cfg_wc['defaults'])
         for l in f:
             param, value = l.decode('utf8').strip().split('=')
@@ -36,6 +50,7 @@ class ConfigHandler(object):
         f.close()
 
     def convert_bool_params(self):
+        """ Convert string parameters to boolean """
         bool_params = [('uses_specific_logfile', False)]
         for param, value in bool_params:
             if param in self.cfg_wc:
@@ -59,14 +74,16 @@ class ConfigHandler(object):
     #def check_all_files
     
 class LogHandler(object):
+    """ A simple wrapper class for the logging module """
 
     def __init__(self, wc, cfg):
         self.logger = logging.getLogger(cfg['logger'])
         self.logger.setLevel(int(cfg['loglevel']))
-        fh = logging.FileHandler(cfg['logfile'])
-        formatter = logging.Formatter('%(levelname)s - %(module)s - %(message)s')
-        fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
+        if not self.logger.handlers:
+            fh = logging.FileHandler(cfg['logfile'])
+            formatter = logging.Formatter('%(levelname)s - %(module)s - %(message)s')
+            fh.setFormatter(formatter)
+            self.logger.addHandler(fh)
 
     def log_msg(self, msg, level):
         self.logger.log(level, msg)

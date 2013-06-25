@@ -1,48 +1,29 @@
 import re
-from sys import stderr
-#from ConfigParser import NoSectionError
 from collections import defaultdict
 
 from article import ArticleParser
-
-# *** global regex ***
-template_re = re.compile(r"\{\{[^\}]*\}\}", re.UNICODE)
-
-link_re = re.compile(r"\[\[([^\]]+)\]\]", re.UNICODE)
-num_re = re.compile(r"^[0-9\-,\s]*$", re.UNICODE)
 
 # tester method
 def uprint(str_):
     print str_.encode('utf8')
 
-def find_links_in_line(line):
-    m = link_re.findall(line)
-    return [i.split('|')[0] for i in m]
-    
-
 class ArticleParserWithLangnames(ArticleParser):
+    """ Class for parsing Wiktionaries that use simple lists for translations
+    instead of templates """
 
     def __init__(self, wikt):
-        #try:
-            ArticleParser.__init__(self, wikt)
-            self.langname_field = int(self.cfg['language_name_field'])
-            self.translation_field = int(self.cfg['translation_field'])
-            self.translation_line_re = re.compile(ur'' + \
-                       self.cfg['translation_line'].decode('utf8'), re.UNICODE)
-            self.entity_delimiter = self.cfg['translation_entity_delimiter']
-            if self.cfg['skip_translation']:
-                self.skip_re_l = [i.decode('utf8') 
-                                  for i in self.cfg['skip_translation'].split(',')]
-            else:
-                self.skip_re_l = None
-            self.read_langname_mapping(self.cfg)
-        #except KeyError as e:
-            #self.log_handler.error(e.message + \
-                                   #" parameter must be defined in config file ")
-        #except NoSectionError as e:
-            #self.log_handler.error("Section not defined " + self.wc)
-        #except Exception as e:
-            #self.log_handler.error("Unknown error " + e)
+        ArticleParser.__init__(self, wikt)
+        self.langname_field = int(self.cfg['language_name_field'])
+        self.translation_field = int(self.cfg['translation_field'])
+        self.translation_line_re = re.compile(ur'' + \
+                   self.cfg['translation_line'].decode('utf8'), re.UNICODE)
+        self.entity_delimiter = self.cfg['translation_entity_delimiter']
+        if self.cfg['skip_translation']:
+            self.skip_re_l = [i.decode('utf8') 
+                              for i in self.cfg['skip_translation'].split(',')]
+        else:
+            self.skip_re_l = None
+        self.read_langname_mapping(self.cfg)
 
     def read_langname_mapping(self, cfg):
         self.mapping = dict()
@@ -84,7 +65,7 @@ class ArticleParserWithLangnames(ArticleParser):
                 try:
                     return fd.group(1).split('|')[1]
                 except IndexError as e:
-                    stderr.write("IndexError in entity " + trans.encode('utf8') + '\n')
+                    self.wiktionary.log_handler.error("IndexError in entity " + trans.encode('utf8'))
         #TODO fix [[kanojo]] [kanojo]
         trans = re.sub('\'\'+[^\']*\'+', '', trans)
         trans = re.sub('""+[^"]*"+', '', trans)
@@ -102,29 +83,18 @@ class ArticleParserWithLangnames(ArticleParser):
 class DefaultArticleParser(ArticleParser):
 
     def __init__(self, wikt):
-        #try:
-            ArticleParser.__init__(self, wikt)
-            self.tr_prefix_l = [i.decode('utf8') 
-                                for i in self.cfg['translation_prefix'].split(',')]
-            self.wc_field = int(self.cfg['wc_field'])
-            self.word_field = int(self.cfg['word_field'])
-            self.line_field = int(self.cfg['line_field'])
-            self.rest_of_fields = int(self.cfg['rest_of_fields'])
-            self.build_trad_re()
-        #except KeyError as e:
-            #self.log_handler.error(e.message + \
-                                   #" parameter must be defined in config file ")
-        #except NoSectionError as e:
-            #self.log_handler.error("Section not defined " + self.wc)
-        #except Exception as e:
-            #self.log_handler.error("Unknown error " + e)
+        ArticleParser.__init__(self, wikt)
+        self.tr_prefix_l = [i.decode('utf8') 
+                            for i in self.cfg['translation_prefix'].split(',')]
+        self.wc_field = int(self.cfg['wc_field'])
+        self.word_field = int(self.cfg['word_field'])
+        self.line_field = int(self.cfg['line_field'])
+        self.rest_of_fields = int(self.cfg['rest_of_fields'])
+        self.build_trad_re()
 
     def build_trad_re(self):
-        #try:
-            re_str = '\{\{(' + '|'.join(self.tr_prefix_l) + ')\|([^}]+)\}\}'
-            self.trad_re = re.compile(ur'' + re_str, re.UNICODE)
-        #except Exception as e:
-            #print e.message
+        re_str = '\{\{(' + '|'.join(self.tr_prefix_l) + ')\|([^}]+)\}\}'
+        self.trad_re = re.compile(ur'' + re_str, re.UNICODE)
 
     def get_pairs(self, text):
         translations = defaultdict(list)
@@ -154,7 +124,8 @@ class DefaultArticleParser(ArticleParser):
         wc = fields[self.wc_field].strip()
         word = fields[self.word_field].strip()
         #FIXME dirty workaround for the Spanish Wiktionary
-        if word.replace(',', '').replace(u'\u2013','').replace('-', '').replace(u'\u2014', '').replace(' ', '').isdigit():
+        if word.replace(',', '').replace(u'\u2013','').replace('-', \
+              '').replace(u'\u2014', '').replace(' ', '').isdigit():
             if len(fields) > self.word_field + 1:
                 word = fields[self.word_field+1].strip()
             else:
