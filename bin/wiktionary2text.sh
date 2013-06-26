@@ -1,4 +1,5 @@
 root=$2;
+this=`pwd`
 while IFS=$'\t' read -r -a myArray
 do
  wc=${myArray[0]}
@@ -8,7 +9,7 @@ do
          echo $wc
          echo $wcdir
          cd ${root}/${wcdir}
-         cat ${wc}wiktionary-latest-pages-meta-current.xml | python /home/judit/dictbuild/test/articles.py > ${wc}wiktionary.txt
+         cat ${wc}wiktionary-latest-pages-meta-current.xml | python ${this}/external/articles.py > ${wc}wiktionary.txt
          cd ../..
      fi
  fi
