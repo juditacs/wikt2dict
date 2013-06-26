@@ -3,6 +3,19 @@
 Wiktionary parser tool for many language editions.
 This is a test version of wikt2dict providing a simple environment to try its features.
 
+I created a quick_test.sh script for lazy people to test the Wiktionary extraction right away without having to read the whole README.
+Just enter the directory bin after cloning and run
+
+    bash quick_test.sh la
+
+where 'la' is the Wiktionary code of the Latin Wiktionary. You can replace it with another that has been configured.
+It might take a few minutes.
+The results are in the ```../dat/Wiktionary/Latin/word_pairs``` file. The first four columns contain the word pairs, you can ignore the rest. 
+
+If you have enough storage, try running on the English Wiktionary:
+
+    bash quick_test.sh en
+
 ## Installation
 1. Checkout the repository from GitHub to a directory with at lot of free space.
 The amount of free space required depends on the number and size of Wiktionaries
@@ -103,13 +116,13 @@ Please cite:
 @inproceedings{Acs:2013,
 
 
-    title={Building basic vocabulary across 40 languages},
+title={Building basic vocabulary across 40 languages},
 
-    author={Judit \'Acs and Katalin Pajkossy and Andr\'as Kornai},
+author={Judit \'Acs and Katalin Pajkossy and Andr\'as Kornai},
 
-    booktitle={Proceedings of the 6th Workshop on Building and Using Comparable Corpora},
+booktitle={Proceedings of the 6th Workshop on Building and Using Comparable Corpora},
 
-    year={2013}
+year={2013}
 
 }
 
