@@ -22,6 +22,10 @@ you want to download (for all 40 you will need about 30GB).
 
     cd ..
 
+5. Create all necessary directories (assuming you are using the default configurations):
+
+    mkdir -p dat/wiktionary dat/triangle log res/langnames
+
 5. You are ready to configure wikt2dict.
 
 
@@ -71,29 +75,44 @@ This command should produce the file: ../dat/wiktionary/Latin/lawiktionary.txt
 
 4. Extract translations using the previously set up configuration:
 
-    python extract_translations.py ../cfg/main.cfg la
+    python extract_translations.py ../cfg/w2d.cfg la
 
 The last parameter tells wikt2dict to extract the Latin Wiktionary.
 
 5. Repeat the steps 1-4. with at least two other Wiktionaries of your choice. 
-Preferrably chose Wiktionaries that have a section in the cfg/translations.cfg file.
+Preferrably chose Wiktionaries that have a full section in the cfg/w2d.cfg file.
+
+## Triangulating
+
+Now you are ready to try the triangulating. This is done by calling:
+
+    python triangulate.py ../cfg/w2d.cfg
+
+The output is saved in the ../dat/triangle directory by default. You can change this of course.
+You can limit the triangulating to a certain languages.
+For example calling:
+    python triangulate.py ../cfg/w2d.cfg la
+
+would only run triangulating for triangles that contain Latin and skip the others.
 
 Congratulations, you have successfully finished the test tutorial of wikt2dict.
 Please send your feedback to judit@sch.bme.hu.
 
+Please cite:
 
-///// Not implemented yet. ////
-6 Now you are ready to try the triangulating. This is done by calling:
+@inproceedings{Acs:2013,
+    title={Building basic vocabulary across 40 languages},
+    author={Judit \'Acs and Katalin Pajkossy and Andr\'as Kornai},
+    booktitle={Proceedings of the 6th Workshop on Building and Using Comparable Corpora},
+    year={2013}
+}
 
-    python triangulate.py ../cfg/translations.cfg
+## Upcoming
 
-The output is saved in the ../dat/triangle directory.
-You can limit the triangulating to a certain languages.
-For example calling:
-    python triangulate.py ../cfg/translations.cfg la
-would only run triangulating for triangles that contain Latin and skip the others.
+4lang coverage
 
-7 4lang coverage
+Check out our basic vocabulary at: http://hlt.sztaki.hu/resources/4lang/
+
 You can create statistics of the coverage of 4lang and uroboros by calling:
 
     cat ../dat/lang/*/res/word_pairs | python fourlang_coverage.py ../res/4lang/coverage
