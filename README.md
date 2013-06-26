@@ -101,10 +101,16 @@ Please send your feedback to judit@sch.bme.hu.
 Please cite:
 
 @inproceedings{Acs:2013,
+
+
     title={Building basic vocabulary across 40 languages},
+
     author={Judit \'Acs and Katalin Pajkossy and Andr\'as Kornai},
+
     booktitle={Proceedings of the 6th Workshop on Building and Using Comparable Corpora},
+
     year={2013}
+
 }
 
 ## Upcoming
