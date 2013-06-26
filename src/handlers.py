@@ -20,9 +20,12 @@ class ConfigHandler(object):
         c_parser = ConfigParser()
         c_parser.read(cfg_fn)
         self.cfg_general = dict([t for t in c_parser.items('general')])
-        self.read_specific_config(c_parser)
-        self.add_missing_params()
-        self.convert_bool_params()
+        if not wc == "general":
+            self.read_specific_config(c_parser)
+            self.add_missing_params()
+            self.convert_bool_params()
+        else:
+            self.cfg_wc = self.cfg_general
 
     def read_specific_config(self, c_parser):
         """ Read the specific section named as the Wiktionary code
@@ -76,7 +79,7 @@ class ConfigHandler(object):
 class LogHandler(object):
     """ A simple wrapper class for the logging module """
 
-    def __init__(self, wc, cfg):
+    def __init__(self, cfg):
         self.logger = logging.getLogger(cfg['logger'])
         self.logger.setLevel(int(cfg['loglevel']))
         if not self.logger.handlers:
@@ -86,16 +89,16 @@ class LogHandler(object):
             self.logger.addHandler(fh)
 
     def log_msg(self, msg, level):
-        self.logger.log(level, msg)
+        self.logger.log(level, str(msg))
 
     def info(self, msg):
-        self.logger.log(logging.INFO, msg)
+        self.logger.log(logging.INFO, str(msg))
 
     def debug(self, msg):
-        self.logger.debug(logging.DEBUG, msg)
+        self.logger.log(logging.DEBUG, str(msg))
 
     def error(self, msg):
-        self.logger.error(logging.ERROR, msg)
+        self.logger.log(logging.ERROR, str(msg))
 
 
 

@@ -16,7 +16,7 @@ class ArticleParser(object):
         This class should not be instantiated.
     """
 
-    def __init__(self, wikt):
+    def __init__(self, wikt, filter_langs=None):
         try:
             self.wiktionary = wikt
             # for convenience
@@ -28,16 +28,19 @@ class ArticleParser(object):
             self.wc = self.wiktionary.wc
             self.build_skip_re()
             with open(self.cfg['wikicodes']) as wc_f:
-                self.wikicodes = set([w.strip() for w in wc_f])
+                if filter_langs:
+                    self.wikicodes = set(filter_langs) | self.wc
+                else:
+                    self.wikicodes = set([w.strip() for w in wc_f])
         #try:
         #self.lower_all = bool(self.cfg.get('lower'), True)
         except KeyError as e:
-            self.log_handler.error(e.message + \
+            self.log_handler.error(str(e.message) + \
                                    " parameter must be defined in config file ")
         except NoSectionError as e:
-            self.log_handler.error("Section not defined " + self.wc)
+            self.log_handler.error("Section not defined " + str(self.wc))
         except Exception as e:
-            self.log_handler.error("Unknown error " + e)
+            self.log_handler.error("Unknown error " + str(e))
 
     def build_skip_re(self):
         if not self.cfg['skip_translation']:

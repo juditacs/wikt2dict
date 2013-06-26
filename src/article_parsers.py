@@ -11,8 +11,8 @@ class ArticleParserWithLangnames(ArticleParser):
     """ Class for parsing Wiktionaries that use simple lists for translations
     instead of templates """
 
-    def __init__(self, wikt):
-        ArticleParser.__init__(self, wikt)
+    def __init__(self, wikt, filter_langs=None):
+        ArticleParser.__init__(self, wikt, filter_langs)
         self.langname_field = int(self.cfg['language_name_field'])
         self.translation_field = int(self.cfg['translation_field'])
         self.translation_line_re = re.compile(ur'' + \
@@ -82,8 +82,8 @@ class ArticleParserWithLangnames(ArticleParser):
 
 class DefaultArticleParser(ArticleParser):
 
-    def __init__(self, wikt):
-        ArticleParser.__init__(self, wikt)
+    def __init__(self, wikt, filter_langs=None):
+        ArticleParser.__init__(self, wikt, filter_langs)
         self.tr_prefix_l = [i.decode('utf8') 
                             for i in self.cfg['translation_prefix'].split(',')]
         self.wc_field = int(self.cfg['wc_field'])

@@ -6,7 +6,7 @@ from article_parsers import DefaultArticleParser, ArticleParserWithLangnames
 class Wiktionary(object):
     """ A class for handling one edition of Wiktionary """
 
-    def __init__(self, wc, cfg_fn, article_parser=None):
+    def __init__(self, wc, cfg_fn):
         """ 
         @param wc: Wiktionary code
         @param cfg_fn: name and path of the configuration file
@@ -14,15 +14,15 @@ class Wiktionary(object):
         try:
             self.wc = wc
             self.cfg = ConfigHandler(wc, cfg_fn)
-            self.log_handler = LogHandler(wc, self.cfg)
+            self.log_handler = LogHandler(self.cfg)
             self.init_parser_of_type()
             self.dump_path = (self.cfg['dumpdir'] + '/' + self.cfg['fullname'] + '/' +
                     self.wc + 'wiktionary.txt')
         except KeyError as e:
-            self.log_handler.error(e.message + \
+            self.log_handler.error(str(e.message) + \
                                    " parameter must be defined in config file ")
         except NoSectionError as e:
-            self.log_handler.error("Section not defined " + wc)
+            self.log_handler.error("Section not defined " + str(wc))
         except Exception as e:
             self.log_handler.error("Unknown error " + str(e))
 
