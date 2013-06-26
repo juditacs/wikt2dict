@@ -1,7 +1,8 @@
 # wikt2dict
 
-Wiktionary parser tool for many language editions.
-This is a test version of wikt2dict providing a simple environment to try its features.
+Wiktionary translation parser tool for many language editions.
+
+## Very quick start
 
 I created a quick_test.sh script for lazy people to test the Wiktionary extraction right away without having to read the whole README.
 Just enter the directory bin after cloning and run
