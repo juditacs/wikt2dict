@@ -46,7 +46,7 @@ class ArticleParser(object):
         if not self.cfg['skip_translation']:
             self.skip_translation_re = None
         else:
-            self.skip_translation_re = re.compile(self.cfg['skip_translation'], re.UNICODE)
+            self.skip_translation_re = re.compile(ur'' + self.cfg['skip_translation'].decode('utf8'), re.UNICODE)
         if not self.cfg['skip_translation_line']:
             self.skip_translation_line_re = None
         else:
