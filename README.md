@@ -22,7 +22,7 @@ If you have enough storage, try running on the English Wiktionary:
 The amount of free space required depends on the number and size of Wiktionaries
 you want to download (for all 40 you will need about 30GB).
 
-    git clone git@github.com:juditacs/wikt2dict.git
+    git clone https://github.com/juditacs/wikt2dict.git
 
 2. Enter the wikt2dict/src directory: 
     
@@ -71,6 +71,7 @@ to understand many words for most European-language speakers.
 2. Download the Wiktionary:
 
     cd bin
+
     bash download_wiktionaries.sh  ../res/wiktionaries.tsv ../dat/wiktionary
 
 After the download finishes,
