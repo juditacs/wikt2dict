@@ -32,6 +32,8 @@ you want to download (for all 40 you will need about 30GB).
 
     export PYTHONPATH=$PYTHONPATH:$(pwd)
 
+Update: this command can be omitted in the latest version.
+
 4. Enter the root directory of wikt2dict:
 
     cd ..

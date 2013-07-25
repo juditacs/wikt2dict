@@ -1,4 +1,6 @@
-from sys import argv, stderr
+from sys import argv, stderr, path
+path.append('../src')
+
 from itertools import combinations
 import logging
 

@@ -1,4 +1,6 @@
-from sys import argv
+from sys import argv, path
+path.append('../src')
+
 from wiktionary import Wiktionary
 import logging
 
