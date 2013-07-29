@@ -18,6 +18,8 @@ class Wiktionary(object):
             self.init_parser_of_type()
             self.dump_path = (self.cfg['dumpdir'] + '/' + self.cfg['fullname'] + '/' +
                     self.wc + 'wiktionary.txt')
+        except NotImplementedError as e:
+            raise NotImplementedError(e)
         except KeyError as e:
             self.log_handler.error(str(e.message) + \
                                    " parameter must be defined in config file ")
@@ -33,6 +35,9 @@ class Wiktionary(object):
             self.article_parser = DefaultArticleParser(self)
         elif type_ == 'langnames':
             self.article_parser = ArticleParserWithLangnames(self)
+        else:
+            raise NotImplementedError(
+                "Parser type " + str(type_) + " not implemented\n")
 
     def set_parser(self, parser):
         self.article_parser = parser
