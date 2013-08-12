@@ -99,7 +99,7 @@ class ArticleParser(object):
         for wc in translations.keys():
             if len(translations[wc]) > 0:
                 self.pairs.extend(
-                        [[self.wc, this_word, wc, i, "sourcewc=" + self.wc, \
+                        [[source_wc, this_word, wc, i, "sourcewc=" + self.wc, \
                       "article=" + this_word] 
                      for i in translations[wc]])
 
