@@ -27,13 +27,16 @@ class ArticleParser(object):
             self.stats = defaultdict(list)
             self.wc = self.wiktionary.wc
             self.build_skip_re()
+            self.build_trim_re()
             with open(self.cfg['wikicodes']) as wc_f:
                 if filter_langs:
                     self.wikicodes = set(filter_langs) | self.wc
                 else:
                     self.wikicodes = set([w.strip() for w in wc_f])
-        #try:
-        #self.lower_all = bool(self.cfg.get('lower'), True)
+            if self.cfg['lower'] and self.cfg['lower'] == 1:
+                self.lower_all = True
+            else:
+                self.lower_all = False
         except KeyError as e:
             self.log_handler.error(str(e.message) + \
                                    " parameter must be defined in config file ")
@@ -41,6 +44,11 @@ class ArticleParser(object):
             self.log_handler.error("Section not defined " + str(self.wc))
         except Exception as e:
             self.log_handler.error("Unknown error " + str(e))
+
+    def build_trim_re(self):
+        if self.cfg['trim_re']:
+            self.trim_re = re.compile(ur'' + self.cfg['trim_re'].decode('utf8'), 
+                                      re.UNICODE)
 
     def build_skip_re(self):
         if not self.cfg['skip_translation']:
@@ -64,6 +72,8 @@ class ArticleParser(object):
             self.stats["skip_article"].append(article[0])
             return None
         title, text = article
+        if self.lower_all:
+            text = text.lower()
         self.titles.add(title)
         self.stats["ok"].append(title)
         t = self.get_pairs(text)
@@ -84,18 +94,14 @@ class ArticleParser(object):
         return False
 
     def store_translations(self, this_word, translations, source_wc=None):
+        if not source_wc:
+            source_wc = self.wc
         for wc in translations.keys():
             if len(translations[wc]) > 0:
-                if not source_wc:
-                    self.pairs.extend(
-                            [[self.wc, this_word.lower(), wc, i.lower(), "sourcewc=" + self.wc, \
-                          "article=" + this_word] 
-                         for i in translations[wc]])
-                else:
-                    self.pairs.extend(
-                            [[source_wc, this_word.lower(), wc, i.lower(), "sourcewc=" + self.wc, \
-                          "article=" + this_word] 
-                         for i in translations[wc]])
+                self.pairs.extend(
+                        [[self.wc, this_word, wc, i, "sourcewc=" + self.wc, \
+                      "article=" + this_word] 
+                     for i in translations[wc]])
 
     def write_word_pairs_to_file(self, append=True):
         """ Write output to file
@@ -145,4 +151,10 @@ class ArticleParser(object):
         if pair[3] in self.titles:
             pair.append("has_article")
         return pair
+
+    def trim_translation(self, text):
+        if self.cfg['trim_re']:
+            text = self.trim_re.sub(r'\1\2', text)
+        return text
+
 

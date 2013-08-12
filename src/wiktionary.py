@@ -1,7 +1,7 @@
 from ConfigParser import NoSectionError
 
+from article_parsers import DefaultArticleParser, ArticleParserWithLangnames, SectionAndArticleParser
 from handlers import ConfigHandler, LogHandler
-from article_parsers import DefaultArticleParser, ArticleParserWithLangnames
 
 class Wiktionary(object):
     """ A class for handling one edition of Wiktionary """
@@ -35,6 +35,8 @@ class Wiktionary(object):
             self.article_parser = DefaultArticleParser(self)
         elif type_ == 'langnames':
             self.article_parser = ArticleParserWithLangnames(self)
+        elif type_ == 'section_level':
+            self.article_parser = SectionAndArticleParser(self)
         else:
             raise NotImplementedError(
                 "Parser type " + str(type_) + " not implemented\n")

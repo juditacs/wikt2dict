@@ -7,6 +7,75 @@ from article import ArticleParser
 def uprint(str_):
     print str_.encode('utf8')
 
+
+class SectionAndArticleParser(ArticleParser):
+    """ Class for parsing Wiktionaries that have translation tables 
+    in foreign articles too and section-level parsing is required """
+
+    def __init__(self, wikt, filter_langs=None):
+        ArticleParser.__init__(self, wikt, filter_langs)
+        self.init_section_parser()
+        self.build_section_re()
+        self.section_langfield = int(self.cfg['section_langfield'])
+        self.read_section_langmap()
+
+    def read_section_langmap(self):
+        self.section_langmap = dict()
+        if self.cfg['uses_section_langnames'] == '1':
+            f = open(self.cfg['section_langmap'])
+            for l in f:
+                fields = l.strip().decode('utf8').split('\t')
+                for langname in fields[1:]:
+                    self.section_langmap[langname] = fields[0]
+                    self.section_langmap[langname.title()] = fields[0]
+            f.close()
+        else:
+            self.section_langmap = dict([(wc, wc) for wc in self.wikicodes])
+
+    def init_section_parser(self):
+        type_ = self.cfg['section_parser']
+        if type_ == 'default':
+            self.section_parser = DefaultArticleParser(self)
+        elif type_ == 'langnames':
+            self.section_parser = ArticleParserWithLangnames(self)
+        else:
+            raise NotImplementedError(
+                "Parser type " + str(type_) + " not implemented\n")
+
+    def build_section_re(self):
+        if not self.cfg['section_re']:
+            self.section_re = re.compile(r'==\s*(.+)\s*==\s*\n(.\n+?)', 
+                                         re.UNICODE|re.MULTILINE)
+        else:
+            self.section_re = re.compile(ur'' + self.cfg['section_re'].decode('utf8') 
+                                         + r'([.\n]+)',
+                                         re.UNICODE|re.MULTILINE)
+   
+    def parse_article(self, article):
+        if self.skip_article(article) == True:
+            self.stats["skip_article"].append(article[0])
+            return None
+        title, text = article
+        for section_lang, section in self.get_sections(text):
+            t = self.section_parser.get_pairs(section)
+            if t:
+                self.store_translations(title, t, section_lang)
+            self.titles.add(title)
+        self.stats["ok"].append(title)
+
+    def get_sections(self, text):
+        section_titles_i = list()
+        for i, line in enumerate(text.split('\n')):
+            m = self.section_re.match(text)
+            if m:
+                lang = m.group(self.section_langfield)
+                section_titles_i.append((i, lang))
+        for i, (ind, lang) in enumerate(section_titles_i[:-1]):
+            if lang in self.section_langmap:
+                yield self.section_langmap[lang], \
+                '\n'.join(text.split('\n')[ind:section_titles_i[i+1][0]])
+
+
 class ArticleParserWithLangnames(ArticleParser):
     """ Class for parsing Wiktionaries that use simple lists for translations
     instead of templates """
@@ -108,7 +177,8 @@ class DefaultArticleParser(ArticleParser):
                     if not fields:
                         continue
                     if fields[0] and fields[1]:
-                        translations[fields[0]].append(fields[1]) 
+                        trimmed = self.trim_translation(fields[1])
+                        translations[fields[0]].append(trimmed) 
         return translations
 
     def unpack_trad_regex(self, match):
