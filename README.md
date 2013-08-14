@@ -4,8 +4,10 @@ Wiktionary translation parser tool for many language editions.
 
 ## News
 
-* added support for German Wiktionary (Aug 2014)
-* had a poster at the Building and Using Comparable Corpora Workshop (BUCC) at ACL13, updated Bibtex accordingly
+* Added support for German Wiktionary (Aug 2014)
+* Had a poster at the Building and Using Comparable Corpora Workshop (BUCC) at ACL13, updated Bibtex accordingly
+  * The paper is available here: http://www.aclweb.org/anthology-new/W/W13/W13-2507.pdf
+* All dictionaries are available here: http://hlt.sztaki.hu/resources
 
 ## Very quick start
 
