@@ -2,6 +2,11 @@
 
 Wiktionary translation parser tool for many language editions.
 
+## News
+
+* added support for German Wiktionary (Aug 2014)
+* had a poster at the Building and Using Comparable Corpora Workshop (BUCC) at ACL13, updated Bibtex accordingly
+
 ## Very quick start
 
 I created a quick_test.sh script for lazy people to test the Wiktionary extraction right away without having to read the whole README.
@@ -13,7 +18,7 @@ where 'la' is the Wiktionary code of the Latin Wiktionary. You can replace it wi
 It might take a few minutes.
 The results are in the ```../dat/Wiktionary/Latin/word_pairs``` file. The first four columns contain the word pairs, you can ignore the rest. 
 
-If you have enough storage, try running on the English Wiktionary:
+If you have enough storage (6-7GB), try running on the English Wiktionary:
 
     bash quick_test.sh en
 
@@ -115,20 +120,28 @@ would only run triangulating for triangles that contain Latin and skip the other
 Congratulations, you have successfully finished the test tutorial of wikt2dict.
 Please send your feedback to judit@sch.bme.hu.
 
+## Cite
+
 Please cite:
 
-@inproceedings{Acs:2013,
+    @InProceedings{acs-pajkossy-kornai:2013:BUCC,  
+      author    = {Acs, Judit  and  Pajkossy, Katalin  and  Kornai, Andras},  
+      title     = {Building basic vocabulary across 40 languages},  
+      booktitle = {Proceedings of the Sixth Workshop on Building and Using Comparable Corpora},  
+      month     = {August},  
+      year      = {2013},  
+      address   = {Sofia, Bulgaria},  
+      publisher = {Association for Computational Linguistics},  
+      pages     = {52--58},  
+      url       = {http://www.aclweb.org/anthology/W13-2507}  
+    }  
 
+## Known Bugs
 
-title={Building basic vocabulary across 40 languages},
+1. Lithuanian and a few other Wiktionaries have translation tables in many articles
+not only for Lithuanian words and these are parsed as they were Lithuanian words. 
+Language detection for all articles should be added.
 
-author={Judit \'Acs and Katalin Pajkossy and Andr\'as Kornai},
-
-booktitle={Proceedings of the 6th Workshop on Building and Using Comparable Corpora},
-
-year={2013}
-
-}
 
 ## Upcoming
 
