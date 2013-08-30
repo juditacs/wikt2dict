@@ -2,6 +2,10 @@
 
 Wiktionary translation parser tool for many language editions.
 
+Wikt2dict parses only the translation sections.
+It also has a triangulation mode which combines the extracted translation pairs to
+generate new ones. 
+
 ## News
 
 * Added support for German Wiktionary (Aug 2014)
@@ -11,7 +15,7 @@ Wiktionary translation parser tool for many language editions.
 
 ## Very quick start
 
-I created a quick_test.sh script for lazy people to test the Wiktionary extraction right away without having to read the whole README.
+I created a quick\_test.sh script for lazy people to test the Wiktionary extraction right away without having to read the whole README.
 Just enter the directory bin after cloning and run
 
     bash quick_test.sh la
@@ -54,6 +58,7 @@ You are ready to configure wikt2dict.
 
 
 ## Configuration
+
 Set the list of Wiktionaries to work with.
 We provide an example configuration file, cfg/main.cfg, with the full
 configuration we used.
@@ -107,6 +112,10 @@ Extract translations using the previously set up configuration:
 
 The last parameter tells wikt2dict to extract the Latin Wiktionary.
 
+It is possible for run all Wiktionaries in the res/wikicodes file using the `all' parameter.
+
+    python extract_translations.py ../cfg/w2d.cfg all
+
 Repeat the steps 1-4. with at least two other Wiktionaries of your choice. 
 Preferrably chose Wiktionaries that have a full section in the cfg/w2d.cfg file.
 
@@ -125,6 +134,45 @@ would only run triangulating for triangles that contain Latin and skip the other
 
 Congratulations, you have successfully finished the test tutorial of wikt2dict.
 Please send your feedback to judit@sch.bme.hu.
+
+## Output
+
+The output is a tab-separated file. The one extracted from the Wiktionaries has the following columns:
+
+1. Wiktionary code 1 (language 1)
+2. Word or expression in language 1
+3. Wiktionary code 2 (language 2)
+4. Word or expression in language 2
+5. Wiktionary code of the Wiktionary from which the pair was extracted
+6. Article from which the pair was extracted
+7. 0 or 1 indicating whether the other word has an article in the Wiktionary
+
+An example:
+
+    en      dog     fr      chien   en      dog     1
+
+The triangulating output has the following columns:
+
+1. Wiktionary code 1 (language 1)
+2. Word or expression in language 1
+3. Wiktionary code 2 (language 2)
+4. Word or expression in language 2
+5. 5-10. The articles and their source Wiktionary that were used to generate this pair
+
+    hu      kutya   oc      chin    hu      kutya   el      σκύλος  oc      chin
+
+The pairs are listed with all possible ways they were found. I provided a little script to 
+sort, unify and count the number of times one pair appears.
+Usage:
+
+    cat triangle_files | bash merge_triangle.sh > output_file
+
+To use with all triangle files:
+
+    cat <triangle_dir>/*/* | bash merge_triangle.sh > output_file
+
+where the <triangle\_dir> should be replaced with the directory where the individual triangle files are
+stored (triangle\_dir option).
 
 ## Cite
 
