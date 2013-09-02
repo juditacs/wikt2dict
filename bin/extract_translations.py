@@ -14,11 +14,13 @@ def main():
     logger = logging.getLogger('wikt2dict')
     for wc in wikicodes:
         try:
+            print 'Parsing ' + wc + 'wiktionary'
             wiktionary = None #FIXME error handling workaround 
             wiktionary = Wiktionary(wc, cfg_fn)
             logger.info('%s Wiktionary object built', wiktionary.cfg['fullname'])
             wiktionary.parse_all_articles()
             logger.info('%s Wiktionary articles parsed', wiktionary.cfg['fullname'])
+            print '   Extracted {0} pairs'.format(len(wiktionary.article_parser.pairs))
             wiktionary.write_pairs()
             logger.info('%s Wiktionary translations written to file', wiktionary.cfg['fullname'])
         except NotImplementedError as e:

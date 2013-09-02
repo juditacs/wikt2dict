@@ -105,7 +105,6 @@ class ArticleParser(object):
 
     def write_word_pairs_to_file(self, append=True):
         """ Write output to file
-        @param fn Name of the file
         One pair and its features are written to tab separated file
         """
         fn = self.cfg['dumpdir'] + '/' + self.cfg['fullname'] + '/' + self.cfg[\
@@ -125,12 +124,16 @@ class ArticleParser(object):
             return None
         if len(pair) < 4:
             return None
-        outstr = "\t".join(pair[0:4])
+        # alphabetic order
+        if pair[0] < pair[2]:
+            outstr = "\t".join(pair[0:4])
+        else:
+            outstr = "\t".join(pair[2:4] + pair[0:2])
         feat_d = dict()
         for feat in pair[4:]:
             fields = feat.split('=')
             if not fields[0] in global_features:
-                print "Feature not found", feat
+                self.log_handler.error('Feature not found {0}'.format(feat))
                 continue
             if len(fields) > 1:
                 feat_d[fields[0]] = fields[1]

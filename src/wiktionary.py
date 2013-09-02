@@ -1,6 +1,11 @@
+from sys import path
+path.append('../src')
+
 from ConfigParser import NoSectionError
 
-from article_parsers import DefaultArticleParser, ArticleParserWithLangnames, SectionAndArticleParser
+#from article_parsers import DefaultArticleParser, SectionAndArticleParser, ArticleParserWithLangnames
+from article_parsers import DefaultArticleParser, ArticleParserWithLangnames, \
+        SectionAndArticleParser
 from handlers import ConfigHandler, LogHandler
 
 class Wiktionary(object):

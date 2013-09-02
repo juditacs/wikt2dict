@@ -84,7 +84,7 @@ class LogHandler(object):
         self.logger.setLevel(int(cfg['loglevel']))
         if not self.logger.handlers:
             fh = logging.FileHandler(cfg['logfile'])
-            formatter = logging.Formatter('%(levelname)s - %(module)s - %(message)s')
+            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(module)s - %(message)s')
             fh.setFormatter(formatter)
             self.logger.addHandler(fh)
 

@@ -8,7 +8,7 @@ from handlers import ConfigHandler, LogHandler
 from triangulator import Triangulator
 
 def main():
-    if len(argv) > 2:
+    if len(argv) > 2 and not argv[2] == 'all':
         filter_wc = set([wc.strip() for wc in argv[2:]])
     else:
         filter_wc = None
