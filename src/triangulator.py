@@ -68,9 +68,8 @@ class Triangulator(object):
             makedirs(dir_)
         for wc2 in self.wikicodes:
             wc1, wc3 = sorted([w for w in self.wikicodes if not w == wc2])
-            fn = dir_ + '/' + '_'.join([wc1, wc2, wc3])
-            f = open(fn, 'w+')
-            min_cnt = self.cfg_general['triangle_threshold']
+            min_cnt = int(self.cfg_general['triangle_threshold'])
+            out_str = u''
             for tri, sources in self.triangles.iteritems():
                 if not tri[0] == wc1 or not tri[2] == wc3:
                     continue
@@ -78,9 +77,14 @@ class Triangulator(object):
                 if self.cfg_general['only_new_triangles'] and \
                    tri[3] in self.pairs[wc1][tri[1]][wc3]:
                     continue
-                if len(sources)/2 >= min_cnt:
-                    f.write('\t'.join(tri).encode('utf8') + 
-                            '\t' + str(len(sources)/2) + '\n')
+                if len(sources) >= min_cnt:
+                    out_str += '\t'.join(tri) + \
+                            '\t' + str(len(sources)) + '\n'
+            if len(out_str) == 0:
+                continue
+            fn = dir_ + '/' + '_'.join([wc1, wc2, wc3])
+            f = open(fn, 'w+')
+            f.write(out_str.encode('utf8'))
             f.close()
 
     def get_dir(self):
