@@ -132,12 +132,23 @@ For example calling:
 
 would only run triangulating for triangles that contain Latin and skip the others.
 
-Congratulations, you have successfully finished the test tutorial of wikt2dict.
-Please send your feedback to judit@sch.bme.hu.
-
 ## Output
 
-The output is a tab-separated file. The one extracted from the Wiktionaries has the following columns:
+The output is a tab-separated file. 
+If you only want the translation pairs you should just cut the first 4 columns:
+    
+    cut -f1-4 <output_file> > <dictionary>
+
+Or without Wiktionary codes:
+
+    cut -f2,4 <output_file> > <dictionary>
+
+Where <output\_file> should be replaced by the output of either the Wiktionary extraction
+or the triangulating, and <dictionary> is the file where the filtered columns are saved.
+
+The columns explained in details are below.
+
+The one extracted from the Wiktionaries has the following columns:
 
 1. Wiktionary code 1 (language 1)
 2. Word or expression in language 1
@@ -174,6 +185,9 @@ To use with all triangle files:
 where the <triangle\_dir> should be replaced with the directory where the individual triangle files are
 stored (triangle\_dir option).
 
+Congratulations, you have successfully finished the test tutorial of wikt2dict.
+Please send your feedback to judit@sch.bme.hu.
+
 ## Cite
 
 Please cite:
@@ -192,7 +206,7 @@ Please cite:
 
 ## Known Bugs
 
-* Lithuanian and a few other Wiktionaries have translation tables in many articles
+* FIXED - Lithuanian and a few other Wiktionaries have translation tables in many articles
 not only for Lithuanian words and these are parsed as they were Lithuanian words. 
 Language detection for all articles should be added. This issue is fixed but configuration
 should be updated.
