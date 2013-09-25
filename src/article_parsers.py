@@ -42,8 +42,7 @@ class SectionAndArticleParser(ArticleParser):
             self.section_re = re.compile(r'==\s*(.+)\s*==\s*\n(.\n+?)', 
                                          re.UNICODE|re.MULTILINE)
         else:
-            self.section_re = re.compile(ur'' + self.cfg['section_re'].decode('utf8') 
-                                         + r'([.\n]+)',
+            self.section_re = re.compile(ur'' + self.cfg['section_re'].decode('utf8'), 
                                          re.UNICODE|re.MULTILINE)
    
     def parse_article(self, article):
@@ -60,15 +59,16 @@ class SectionAndArticleParser(ArticleParser):
 
     def get_sections(self, text):
         section_titles_i = list()
-        for i, line in enumerate(text.split('\n')):
-            m = self.section_re.match(text)
+        text_l = text.split('\n')
+        for i, line in enumerate(text_l):
+            m = self.section_re.match(line)
             if m:
                 lang = m.group(self.section_langfield)
                 section_titles_i.append((i, lang))
         for i, (ind, lang) in enumerate(section_titles_i[:-1]):
             if lang in self.section_langmap:
                 yield self.section_langmap[lang], \
-                '\n'.join(text.split('\n')[ind:section_titles_i[i+1][0]])
+                '\n'.join(text_l[ind:section_titles_i[i+1][0]])
 
 
 class ArticleParserWithLangnames(ArticleParser):

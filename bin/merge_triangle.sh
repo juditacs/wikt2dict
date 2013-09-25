@@ -1,1 +1,1 @@
-sort - | awk -F$'\t' 'BEGIN {OFS="\t";cnt=1;prev=""} {this=$1"\t"$2"\t"$3"\t"$4; if (prev == "") {prev = this; next} if (prev == this) {cnt++;next} print prev, cnt; cnt = 1; prev = this} END {print prev,cnt}'
+sort -u - | awk -F$'\t' 'BEGIN {OFS="\t";cnt=1;prev=""} {this=$1"\t"$2"\t"$3"\t"$4; if (prev == "") {prev = this; next} if (prev == this) {cnt+=$5;next} print prev, cnt; cnt = 1; prev = this} END {print prev,cnt}'

@@ -7,7 +7,7 @@ from handlers import ConfigHandler, LogHandler
 class Triangulator(object):
 
     def __init__(self, triangle_wc, cfg_fn):
-        self.wikicodes = set(triangle_wc)
+        self.wikicodes = list(triangle_wc)
         self.cfg_general = ConfigHandler("general", cfg_fn)
         self.log_handler = LogHandler(self.cfg_general)
         self.pairs = defaultdict(lambda: defaultdict(lambda:
@@ -48,8 +48,10 @@ class Triangulator(object):
         for wc in self.wikicodes:
             self.cfg[wc] = ConfigHandler(wc, cfg_fn)
 
-    def collect_triangles(self):
+    def collect_triangles(self, mode=''):
         for wc2 in self.wikicodes: # this is the bridge language
+            if mode == 'only' and not wc2 == self.wikicodes[1]:
+                continue
             wc1, wc3 = sorted([w for w in self.wikicodes if not w == wc2])
             for w2, tr in self.pairs[wc2].iteritems():
                 for w1, src1_l in tr[wc1].iteritems():
@@ -78,8 +80,14 @@ class Triangulator(object):
                    tri[3] in self.pairs[wc1][tri[1]][wc3]:
                     continue
                 if len(sources) >= min_cnt:
-                    out_str += '\t'.join(tri) + \
-                            '\t' + str(len(sources)) + '\n'
+                    if self.cfg_general['triangle_verbose']:
+                        # getting unique sources
+                        for src in set(['\t'.join(s) for s in sources]):
+                            out_str += '\t'.join(tri) + \
+                                    '\t' + src + '\n'
+                    else:
+                        out_str += '\t'.join(tri) + \
+                                '\t' + str(len(['\t'.join(s) for s in sources])) + '\n'
             if len(out_str) == 0:
                 continue
             fn = dir_ + '/' + '_'.join([wc1, wc2, wc3])
