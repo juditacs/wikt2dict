@@ -56,11 +56,11 @@ class Triangulator(object):
                     for w3, src3_l in tr[wc3].iteritems():
                         for pair in product(src1_l, src3_l):
                             if wc1 < wc3:
-                                self.triangles[(wc1, w1, wc3, w3)].append([
-                                    pair[0][0], pair[0][1], pair[1][0], pair[1][1]])
+                                self.triangles[(wc1, w1, wc3, w3)].append((
+                                    pair[0][0], pair[0][1], wc2, w2, pair[1][0], pair[1][1]))
                             else:
-                                self.triangles[(wc3, w3, wc1, w1)].append([
-                                    pair[0][0], pair[0][1], pair[1][0], pair[1][1]])
+                                self.triangles[(wc3, w3, wc1, w1)].append((
+                                    pair[0][0], pair[0][1], wc2, w2, pair[1][0], pair[1][1]))
 
     def write_triangles(self):
         dir_ = self.get_dir()
@@ -68,8 +68,9 @@ class Triangulator(object):
             makedirs(dir_)
         for wc2 in self.wikicodes:
             wc1, wc3 = sorted([w for w in self.wikicodes if not w == wc2])
+            fn = dir_ + '/' + '_'.join([wc1, wc2, wc3])
+            f = open(fn, 'w+')
             min_cnt = int(self.cfg_general['triangle_threshold'])
-            out_str = u''
             for tri, sources in self.triangles.iteritems():
                 if not tri[0] == wc1 or not tri[2] == wc3:
                     continue
@@ -78,13 +79,9 @@ class Triangulator(object):
                    tri[3] in self.pairs[wc1][tri[1]][wc3]:
                     continue
                 if len(sources) >= min_cnt:
-                    out_str += '\t'.join(tri) + \
-                            '\t' + str(len(sources)) + '\n'
-            if len(out_str) == 0:
-                continue
-            fn = dir_ + '/' + '_'.join([wc1, wc2, wc3])
-            f = open(fn, 'w+')
-            f.write(out_str.encode('utf8'))
+                    for s in set(sources):
+                        f.write('\t'.join(tri).encode('utf8') + '\t' + 
+                                '\t'.join(s).encode('utf8') + '\n')
             f.close()
 
     def get_dir(self):
