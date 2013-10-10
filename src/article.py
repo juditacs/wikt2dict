@@ -103,12 +103,13 @@ class ArticleParser(object):
                       "article=" + this_word] 
                      for i in translations[wc]])
 
-    def write_word_pairs_to_file(self, append=True):
+    def write_word_pairs_to_file(self, append=True, fn=''):
         """ Write output to file
         One pair and its features are written to tab separated file
         """
-        fn = self.cfg['dumpdir'] + '/' + self.cfg['fullname'] + '/' + self.cfg[\
-                      'word_pairs_outfile']
+        if not fn:
+            fn = self.cfg['dumpdir'] + '/' + self.cfg['fullname'] + '/' + self.cfg[\
+                          'word_pairs_outfile']
         if append:
             outf = open(fn, 'a+')
         else:

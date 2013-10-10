@@ -78,7 +78,7 @@ class Wiktionary(object):
         for article in self.read_dump():
             self.article_parser.parse_article(article)
 
-    def write_pairs(self):
+    def write_pairs(self, fn=''):
         """ Writing the extracted translations to file """
-        self.article_parser.write_word_pairs_to_file()
+        self.article_parser.write_word_pairs_to_file(append=False, fn=fn)
 

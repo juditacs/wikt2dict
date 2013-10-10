@@ -6,15 +6,36 @@ from handlers import ConfigHandler, LogHandler
 
 class Triangulator(object):
 
-    def __init__(self, triangle_wc, cfg_fn):
+    def __init__(self, triangle_wc=[], cfg_fn='', all_wc=[]):
         self.wikicodes = list(triangle_wc)
         self.cfg_general = ConfigHandler("general", cfg_fn)
         self.log_handler = LogHandler(self.cfg_general)
         self.pairs = defaultdict(lambda: defaultdict(lambda:
                      defaultdict(lambda: defaultdict(list))))
+        self.all_wc = all_wc
+        self.cfg = dict()
         self.triangles = defaultdict(list)
-        self.read_three_configs(cfg_fn)
-        self.read_pairs_in_three_langs()
+        #self.read_three_configs(cfg_fn)
+        self.read_all_configs(cfg_fn)
+        self.read_all_pairs()
+        #self.read_pairs_in_three_langs()
+
+    def read_all_configs(self, cfg_fn):
+        for wc in self.all_wc:
+            self.cfg[wc ] = ConfigHandler(wc, cfg_fn)
+
+    def read_all_pairs(self):
+        for wc in self.all_wc:
+            if not self.cfg[wc]:
+                continue
+            fn = self.cfg_general['dumpdir'] + '/' + self.cfg[wc]['fullname'] + \
+                    '/' + self.cfg_general['word_pairs_outfile']
+            if not path.exists(fn):
+                continue
+            self.read_pairs_in_lang(wc, fn)
+
+    def set_triangle(self, tri):
+        self.wikicodes=list(tri)
 
     def read_pairs_in_three_langs(self):
         for wc in self.wikicodes:
@@ -43,6 +64,28 @@ class Triangulator(object):
             else:
                 self.pairs[wc2][w2][wc1][w1].append((src_wc, src_art))
             
+    def set_two_langs(self, wc1, wc2):
+        if wc1 < wc2:
+            self.wc1 = wc1
+            self.wc2 = wc2
+        else:
+            self.wc1 = wc2
+            self.wc2 = wc1
+
+    def collect_50_triangles(self):
+        self.triangles = defaultdict(list)
+        for wc_bridge in self.all_wc:
+            for w2, tr in self.pairs[wc_bridge].iteritems():
+                for w1, src1_l in tr[self.wc1].iteritems():
+                    for w3, src3_l in tr[self.wc2].iteritems():
+                        for pair in product(src1_l, src3_l):
+                            if self.wc1 < self.wc2:
+                                self.triangles[(self.wc1, w1, self.wc2, w3)].append([
+                                    pair[0][0], pair[0][1], wc_bridge, w2, pair[1][0], pair[1][1]])
+                            else:
+                                self.triangles[(self.wc2, w3, self.wc1, w1)].append([
+                                    pair[0][0], pair[0][1], wc_bridge, w2, pair[1][0], pair[1][1]])
+
     def read_three_configs(self, cfg_fn):
         self.cfg = dict()
         for wc in self.wikicodes:
@@ -63,6 +106,19 @@ class Triangulator(object):
                             else:
                                 self.triangles[(wc3, w3, wc1, w1)].append([
                                     pair[0][0], pair[0][1], pair[1][0], pair[1][1]])
+
+    def write_50_triangles(self, fn, wc_src, wc_tgt):
+        f = open(fn, 'w')
+        for tri, sources in self.triangles.iteritems():
+            wc1, w1, wc2, w2 = tri
+            if not (wc1 == wc_src and wc2 == wc_tgt) and not \
+               (wc2 == wc_src and wc1 == wc_tgt):
+                continue
+            if w2 in self.pairs[wc1][w1][wc2]:
+                continue
+            for src in set(['\t'.join(s) for s in sources]):
+                f.write('\t'.join(tri).encode('utf8') + '\t' + src.encode('utf8') + '\n')
+        f.close()
 
     def write_triangles(self):
         dir_ = self.get_dir()
