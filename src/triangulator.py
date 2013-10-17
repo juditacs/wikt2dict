@@ -114,8 +114,8 @@ class Triangulator(object):
             if not (wc1 == wc_src and wc2 == wc_tgt) and not \
                (wc2 == wc_src and wc1 == wc_tgt):
                 continue
-            if w2 in self.pairs[wc1][w1][wc2]:
-                continue
+            #if w2 in self.pairs[wc1][w1][wc2]:
+                #continue
             for src in set(['\t'.join(s) for s in sources]):
                 f.write('\t'.join(tri).encode('utf8') + '\t' + src.encode('utf8') + '\n')
         f.close()
