@@ -13,7 +13,6 @@ def main():
         e.compare_with_triangles_stdin()
     elif mode == 'feat':
         e.featurize_and_uniq_triangles_stdin()
-        e.write_overall('overall')
 
 if __name__ == '__main__':
     main()
