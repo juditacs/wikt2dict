@@ -12,6 +12,7 @@ def main():
         e.read_all_wiktionary()
         e.compare_with_triangles_stdin()
     elif mode == 'feat':
+        e.write_labels(argv[3])
         e.featurize_and_uniq_triangles_stdin()
 
 if __name__ == '__main__':
