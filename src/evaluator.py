@@ -1,6 +1,6 @@
 from collections import defaultdict
 from os import listdir
-from sys import stdin
+from sys import stdin, stderr
 import logging
 
 class Evaluator(object):
@@ -24,6 +24,8 @@ class Evaluator(object):
         self.feat_order.extend(['left_' + str(i) for i in self.edge_gran])
         self.feat_order.extend(['right_' + str(i) for i in self.edge_gran])
         self.feat_order.extend(['pivot_langs_' + str(i) for i in self.pivot_gran])
+        self.feat_order.extend(['left_disjunct_' + str(i) for i in self.edge_gran])
+        self.feat_order.extend(['right_disjunct_' + str(i) for i in self.edge_gran])
         self.feat_order.extend(['left_langs_' + str(i) for i in self.edge_gran])
         self.feat_order.extend(['right_langs_' + str(i) for i in self.edge_gran])
         for wc in self.wikicodes:
@@ -32,6 +34,12 @@ class Evaluator(object):
             self.feat_order.extend([wc + '_left_' + str(i) for i in self.edge_gran])
         for wc in self.wikicodes:
             self.feat_order.extend([wc + '_right_' + str(i) for i in self.edge_gran])
+
+    def write_labels(self, fn):
+        f = open(fn, 'w')
+        f.write('\n'.join('{0} {1}'.format(name, i) for i, name in enumerate(
+            self.feat_order)))
+        f.close()
 
     def read_all_wiktionary(self):
         for lang in listdir(self.cfg['dumpdir']):
@@ -52,6 +60,9 @@ class Evaluator(object):
                     logging.warning('Line too short: {0}'.format(l.strip()))
                     continue
                 wc1, w1, wc2, w2 = self.get_ordered_pair(l_[0:4])
+
+                if not wc1 in self.wikicodes or not wc2 in self.wikicodes:
+                    continue
                 self.wikt[wc1][w1][wc2][w2] += 1
             except:
                 logging.exception('Exception at line: {0}'.format(l.strip()))
@@ -87,7 +98,11 @@ class Evaluator(object):
     def featurize_and_uniq_triangles_stdin(self):
         tri_group = set()
         tri_group_head = None
+        cnt = 0
         for l in stdin:
+            cnt += 1
+            if cnt % 10000 == 0:
+                stderr.write('{0}\n'.format(cnt))
             try:
                 l_ = l.decode('utf8').strip().split('\t')
                 this_tri = '\t'.join(l_[0:4])
@@ -110,12 +125,11 @@ class Evaluator(object):
                
     def print_pair_with_features(self, pair, feat):
         out = u''
-        out += '\t'.join(pair)
-        for f in self.feat_order:
-            if not f in feat:
-                logging.info('%s not in features' % f)
-            out += '\t{0}'.format(feat[f])
-        print out.encode('utf8')
+        out += '\t'.join(pair) + '\t'
+        for i, f in enumerate(self.feat_order):
+            if f in feat and feat[f] == 1:
+                out += '{0} '.format(i)
+        print out.strip().encode('utf8')
 
     def featurize_group(self, group):
         feats = defaultdict(int)
@@ -137,12 +151,14 @@ class Evaluator(object):
         pivot_langs = len(set([lang for lang, _ in pivots]))
         self.map_int_feature_to_binaries('pivot_langs', pivot_langs, 
                                          self.pivot_gran, feats)
-        left_langs = len(set([lang for lang, _ in left]))
-        self.map_int_feature_to_binaries('left_langs', left_langs, 
+        left_langs = set([lang for lang, _ in left])
+        self.map_int_feature_to_binaries('left_langs', len(left_langs), 
                                          self.edge_gran, feats)
-        right_langs = len(set([lang for lang, _ in right]))
-        self.map_int_feature_to_binaries('right_langs', right_langs, 
+        right_langs = set([lang for lang, _ in right])
+        self.map_int_feature_to_binaries('right_langs', len(right_langs), 
                                          self.edge_gran, feats)
+        self.map_int_feature_to_binaries('left_disjunct', len(left_langs - right_langs), self.edge_gran, feats)
+        self.map_int_feature_to_binaries('right_disjunct', len(right_langs - left_langs), self.edge_gran, feats)
         self.add_wc_features(pair, feats)
 
         self.map_int_feature_to_binaries_by_wc('_pivot', pivots, 

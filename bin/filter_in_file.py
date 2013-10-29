@@ -5,14 +5,18 @@ def main():
     mode = argv[2]
     with open(argv[1]) as f:
         for l in f:
-            fd = l.decode('utf8').strip().split('\t')
+            fd = l.decode('utf8').strip().lower().split('\t')
             if len(fd) < 4:
                 stderr.write('Error on line {1}'. format(l))
                 continue
             filt.add(tuple(fd[0:4]))
     stderr.write('Filter file read\n')
+    cnt = 0
     for l in stdin:
-        fd = l.decode('utf8').strip().split('\t')
+        cnt += 1
+        if cnt % 100000 == 0:
+            stderr.write('{0}\n'.format(cnt))
+        fd = l.decode('utf8').strip().lower().split('\t')
         if len(fd) < 4:
             stderr.write('Error on line {1}'. format(l))
             continue
