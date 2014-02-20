@@ -3,18 +3,32 @@ from collections import defaultdict
 
 from article import ArticleParser
 
+
 class SectionAndArticleParser(ArticleParser):
-    """ Class for parsing Wiktionaries that have translation tables 
-    in foreign articles too and section-level parsing is required """
+    """
+    Class for parsing Wiktionaries that have translation tables 
+    in foreign articles too and section-level parsing is required.
+    e.g. dewiktionary has a translation section in the article
+    about the English word dog. Therefore, we need to recognize
+    the language of the title word (dog) and then parse the
+    translation table.
+    """
 
     def __init__(self, wikt, filter_langs=None):
         ArticleParser.__init__(self, wikt, filter_langs)
         self.init_section_parser(wikt)
         self.build_section_re()
-        self.section_langfield = int(self.cfg['section_langfield'])
+        self.section_langfield = int(self.cfg.get('section_langfield', 0))
         self.read_section_langmap()
 
     def read_section_langmap(self):
+        """
+        The language of a section is determined based on its header.
+        The header may or may not use language names.
+        If a language name map is specified, then each section header
+        will be looked up in that map.
+        Otherwise wikicodes are used.
+        """
         self.section_langmap = dict()
         if self.cfg['uses_section_langnames'] == '1':
             f = open(self.cfg['section_langmap'])
