@@ -1,8 +1,19 @@
-from sys import stdin, argv, stderr
+""" Wikt2Dict - Polygons
+
+Usage:
+    find_polygons.py (polygons|clicks) [--wc-filter=<file>] [--k=<int>] [<input>...]
+
+Options:
+    --wc-filter=<file>      Filter input to wikicodes specified in file.
+    -h --help               Show this screen.
+    --k=<int>               Length of polygons [default: 4].
+    --output=<file>         Output location.
+"""
+from docopt import docopt
+from sys import stdin, stderr
 from collections import defaultdict
 from copy import copy
 
-k = int(argv[-1])
 
 def read_triangles(wc_filter):
     tri = defaultdict(set)
@@ -15,7 +26,7 @@ def read_triangles(wc_filter):
     return tri
 
 
-def find_and_print_quads(triangles, found=None):
+def find_and_print_quads(triangles, found=None, k=4):
     if not found:
         for w1, words in triangles.iteritems():
             found = [w1]
@@ -59,16 +70,19 @@ def get_edge_density(triangles, cycle):
 
 
 def main():
-    if len(argv) > 1:
-        with open(argv[1]) as f:
+    arguments = docopt(__doc__, version="Wikt2dict/Polygons 0.1")
+    print arguments
+    if arguments['--wc-filter']:
+        with open(arguments['--wc-filter']) as f:
             wc_filter = set([wc.strip() for wc in f])
     else:
         wc_filter = None
+    k = int(arguments['--k'])
     triangles = read_triangles(wc_filter)
     stderr.write('Triangles read\n')
     stderr.write('Number of triangles {0}\n'.format(
         sum(len(v) for v in triangles.values()) / 2))
-    find_and_print_quads(triangles)
+    find_and_print_quads(triangles, 4)
 
 if __name__ == '__main__':
     main()
