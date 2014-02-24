@@ -22,10 +22,10 @@ def download_wiktionaries(fn=None, wc_list=None):
 def main():
     arguments = docopt(__doc__, version='Wikt2dict 1.1')
     if arguments['download']:
-        if arguments['wikicodes']:
-            download_wiktionaries(fn=arguments['wikicodes'])
+        if arguments['--wikicodes']:
+            download_wiktionaries(fn=arguments['--wikicodes'])
         else:
-            download_wiktionaries(wc_list=arguments['wc'])
+            download_wiktionaries(wc_list=arguments['--wikicodes'])
     print(arguments)
 
 if __name__ == '__main__':
