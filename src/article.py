@@ -1,4 +1,5 @@
 import re
+import logging
 from collections import defaultdict
 from ConfigParser import NoSectionError
 
@@ -16,34 +17,24 @@ class ArticleParser(object):
         This class should not be instantiated.
     """
 
-    def __init__(self, wikt, filter_langs=None):
-        try:
-            self.wiktionary = wikt
-            # for convenience
-            self.cfg = self.wiktionary.cfg
-            self.log_handler = self.wiktionary.log_handler
-            self.pairs = list()
-            self.titles = set()
-            self.stats = defaultdict(list)
-            self.wc = self.wiktionary.wc
-            self.build_skip_re()
-            self.build_trim_re()
-            with open(self.cfg['wikicodes']) as wc_f:
-                if filter_langs:
-                    self.wikicodes = set(filter_langs) | self.wc
-                else:
-                    self.wikicodes = set([w.strip() for w in wc_f])
-            if self.cfg['lower'] and self.cfg['lower'] == 1:
-                self.lower_all = True
+    def __init__(self, cfg, filter_langs=None):
+        # for convenience
+        self.cfg = cfg
+        self.pairs = list()
+        self.titles = set()
+        self.stats = defaultdict(list)
+        self.wc = self.cfg.wc
+        self.build_skip_re()
+        self.build_trim_re()
+        with open(self.cfg['wikicodes']) as wc_f:
+            if filter_langs:
+                self.wikicodes = set(filter_langs) | self.wc
             else:
-                self.lower_all = False
-        except KeyError as e:
-            self.log_handler.error(str(e.message) + \
-                                   " parameter must be defined in config file ")
-        except NoSectionError as e:
-            self.log_handler.error("Section not defined " + str(self.wc))
-        except Exception as e:
-            self.log_handler.error("Unknown error " + str(e))
+                self.wikicodes = set([w.strip() for w in wc_f])
+        if self.cfg['lower'] and self.cfg['lower'] == 1:
+            self.lower_all = True
+        else:
+            self.lower_all = False
 
     def build_trim_re(self):
         if self.cfg['trim_re']:

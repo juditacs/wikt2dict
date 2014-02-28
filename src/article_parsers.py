@@ -46,7 +46,7 @@ class SectionAndArticleParser(ArticleParser):
         if type_ == 'default':
             self.section_parser = DefaultArticleParser(wikt)
         elif type_ == 'langnames':
-            self.section_parser = ArticleParserWithLangnames(wikt)
+            self.section_parser = LangnamesArticleParser(wikt)
         else:
             raise NotImplementedError(
                 "Parser type " + str(type_) + " not implemented\n")
@@ -85,7 +85,7 @@ class SectionAndArticleParser(ArticleParser):
                 '\n'.join(text.split('\n')[ind:section_titles_i[i+1][0]])
 
 
-class ArticleParserWithLangnames(ArticleParser):
+class LangnamesArticleParser(ArticleParser):
     """ Class for parsing Wiktionaries that use simple lists for translations
     instead of templates """
 
@@ -161,8 +161,8 @@ class ArticleParserWithLangnames(ArticleParser):
 
 class DefaultArticleParser(ArticleParser):
 
-    def __init__(self, wikt, filter_langs=None):
-        ArticleParser.__init__(self, wikt, filter_langs)
+    def __init__(self, cfg, filter_langs=None):
+        ArticleParser.__init__(self, cfg, filter_langs)
         self.tr_prefix_l = [i.decode('utf8') 
                             for i in self.cfg['translation_prefix'].split(',')]
         self.wc_field = int(self.cfg['wc_field'])

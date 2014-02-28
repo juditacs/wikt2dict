@@ -12,7 +12,7 @@ Options:
 from docopt import docopt
 import logging
 
-from wiktionary import Wiktionary
+from wiktionary2 import Wiktionary
 
 logger = logging.getLogger('wikt2dict')
 
