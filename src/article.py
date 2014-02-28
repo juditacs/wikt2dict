@@ -158,6 +158,10 @@ class ArticleParser(object):
     def trim_translation(self, text):
         if self.cfg['trim_re']:
             text = self.trim_re.sub(r'\1\2', text)
+        text = text.replace('[', '')
+        text = text.replace(']', '')
+        text = text.replace('{', '')
+        text = text.replace('}', '')
         return text
 
 
