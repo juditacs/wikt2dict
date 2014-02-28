@@ -2,7 +2,7 @@
 Wikt2Dict
 
 Usage:
-  w2d.py (download|textify) (--wikicodes=file|<wc>...)
+  w2d.py (download|textify|extract|triangulate) (--wikicodes=file|<wc>...)
 
 Options:
   -h --help              Show this screen.
@@ -12,11 +12,24 @@ Options:
 from docopt import docopt
 import logging
 
+from wiktionary import Wiktionary
+
 logger = logging.getLogger('wikt2dict')
 
 def download_wiktionaries(fn=None, wc_list=None):
     logger.info('Downloading Wiktionaries')
-    pass
+
+
+def extract_translations(wc_list=None):
+    logger.info('Extracting translations')
+    import config
+    if wc_list:
+        to_parse = filter(config.configs, lambda c: c.wc in wc_list)
+    else:
+        to_parse = config.configs
+    for cfg in to_parse:
+        wikt = Wiktionary(cfg)  #TODO
+        wikt.parse_articles()  #TODO
 
 
 def main():
@@ -26,6 +39,11 @@ def main():
             download_wiktionaries(fn=arguments['--wikicodes'])
         else:
             download_wiktionaries(wc_list=arguments['--wikicodes'])
+    if arguments['extract']:
+        if arguments['--wikicodes']:
+            extract_translations(fn=arguments['--wikicodes'])
+        else:
+            extract_translations(wc_list=arguments['--wikicodes'])
     print(arguments)
 
 if __name__ == '__main__':
