@@ -161,19 +161,40 @@ class LangnamesArticleParser(ArticleParser):
 
 class DefaultArticleParser(ArticleParser):
 
-    def __init__(self, cfg, filter_langs=None):
-        ArticleParser.__init__(self, cfg, filter_langs)
-        self.tr_prefix_l = [i.decode('utf8') 
-                            for i in self.cfg['translation_prefix'].split(',')]
-        self.wc_field = int(self.cfg['wc_field'])
-        self.word_field = int(self.cfg['word_field'])
-        self.line_field = int(self.cfg['line_field'])
-        self.rest_of_fields = int(self.cfg['rest_of_fields'])
-        self.build_trad_re()
+    def __init__(self, wikt_cfg, parser_cfg, filter_langs=None):
+        ArticleParser.__init__(self, wikt_cfg, parser_cfg, filter_langs)
+        #self.tr_prefix_l = [i 
+                            #for i in self.cfg['translation_prefix'].split(',')]
+        #self.wc_field = int(self.cfg['wc_field'])
+        #self.word_field = int(self.cfg['word_field'])
+        #self.line_field = int(self.cfg['line_field'])
+        #self.rest_of_fields = int(self.cfg['rest_of_fields'])
+        #self.build_trad_re()
+        self.trad_re = parser_cfg.trad_re
 
     def build_trad_re(self):
         re_str = '\{\{(' + '|'.join(self.tr_prefix_l) + ')\|([^}]+)\}\}'
         self.trad_re = re.compile(ur'' + re_str, re.UNICODE)
+
+    def extract_translations(self, title, text):
+        translations = list()
+        m = self.trad_re.finditer(text)
+        for tr in m:
+            wc = tr.group(self.cfg.wc_field)
+            if not wc.strip() or not wc in self.wikt_cfg.wikicodes:
+                continue
+            word = tr.group(self.cfg.word_field).replace('\n', ' ')
+            if not word.strip():
+                continue
+            if self.skip_word(word):
+                continue
+            translations.append((wc, word))
+        return translations
+
+    def skip_word(self, word):
+        if self.cfg.skip_translation_re.search(word):
+            return True
+        return False
 
     def get_pairs(self, text):
         translations = defaultdict(list)

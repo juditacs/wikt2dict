@@ -12,7 +12,7 @@ Options:
 from docopt import docopt
 import logging
 
-from wiktionary2 import Wiktionary
+from wiktionary import Wiktionary
 
 logger = logging.getLogger('wikt2dict')
 
@@ -44,7 +44,6 @@ def main():
             extract_translations(fn=arguments['--wikicodes'])
         else:
             extract_translations(wc_list=arguments['--wikicodes'])
-    print(arguments)
 
 if __name__ == '__main__':
     main()

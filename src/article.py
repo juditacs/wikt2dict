@@ -1,7 +1,6 @@
 import re
 import logging
 from collections import defaultdict
-from ConfigParser import NoSectionError
 
 template_re = re.compile(r"\{\{[^\}]*\}\}", re.UNICODE)
 default_translation_re = re.compile(
@@ -17,20 +16,14 @@ class ArticleParser(object):
         This class should not be instantiated.
     """
 
-    def __init__(self, cfg, filter_langs=None):
-        # for convenience
-        self.cfg = cfg
+    def __init__(self, wikt_cfg, parser_cfg, filter_langs=None):
+        self.cfg = parser_cfg
+        self.wikt_cfg = wikt_cfg
         self.pairs = list()
         self.titles = set()
         self.stats = defaultdict(list)
-        self.wc = self.cfg.wc
         self.build_skip_re()
         self.build_trim_re()
-        with open(self.cfg['wikicodes']) as wc_f:
-            if filter_langs:
-                self.wikicodes = set(filter_langs) | self.wc
-            else:
-                self.wikicodes = set([w.strip() for w in wc_f])
         if self.cfg['lower'] and self.cfg['lower'] == 1:
             self.lower_all = True
         else:
@@ -85,8 +78,6 @@ class ArticleParser(object):
         return False
 
     def store_translations(self, this_word, translations, source_wc=None):
-        if not source_wc:
-            source_wc = self.wc
         for wc in translations.keys():
             if len(translations[wc]) > 0:
                 self.pairs.extend(
