@@ -16,7 +16,9 @@ from wiktionary import Wiktionary
 
 logger = logging.getLogger('wikt2dict')
 
+
 def download_wiktionaries(fn=None, wc_list=None):
+    # TODO
     logger.info('Downloading Wiktionaries')
 
 
@@ -28,8 +30,8 @@ def extract_translations(wc_list=None):
     else:
         to_parse = config.configs
     for cfg in to_parse:
-        wikt = Wiktionary(cfg)  # TODO
-        wikt.parse_articles()  # TODO
+        wikt = Wiktionary(cfg)
+        wikt.parse_articles()
 
 
 def main():
