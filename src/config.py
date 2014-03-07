@@ -254,13 +254,12 @@ class FrenchConfig(DefaultWiktionaryConfig):
         super(FrenchConfig, self).__init__()
 
 
-class GalicianConfig(FrenchConfig):
+class GalicianConfig(DefaultWiktionaryConfig):
 
     def __init__(self):
-        super(GalicianConfig, self).__init__()
         self.full_name = 'Galician'
         self.wc = 'gl'
-        print self.parsers
+        super(GalicianConfig, self).__init__()
 
 
 class GeorgianConfig(DefaultWiktionaryConfig):
@@ -322,7 +321,7 @@ class LatinConfig(DefaultWiktionaryConfig):
         self.full_name = 'Latin'
         self.wc = 'la'
         self.default_cfg = {
-            'translation_prefix': r'x(\|[^|]*=[^|]*)?',
+            'translation_prefix': r'x',
         }
         super(LatinConfig, self).__init__()
 
@@ -399,12 +398,12 @@ class SpanishConfig(DefaultWiktionaryConfig):
         super(SpanishConfig, self).__init__()
 
 
-class SwahiliConfig(FrenchConfig):
+class SwahiliConfig(DefaultWiktionaryConfig):
 
     def __init__(self):
-        super(SwahiliConfig, self).__init__()
         self.full_name = 'Swahili'
         self.wc = 'sw'
+        super(SwahiliConfig, self).__init__()
 
 
 class SwedishConfig(DefaultWiktionaryConfig):
@@ -432,7 +431,7 @@ class TurkishConfig(DefaultWiktionaryConfig):
 class DanishConfig(SpanishConfig):
 
     def __init__(self):
-        super(SpanishConfig, self).__init__()
+        super(DanishConfig, self).__init__()
         self.full_name = 'Danish'
         self.wc = 'da'
 
