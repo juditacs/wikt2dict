@@ -24,12 +24,12 @@ def extract_translations(wc_list=None):
     logger.info('Extracting translations')
     import config
     if wc_list:
-        to_parse = filter(config.configs, lambda c: c.wc in wc_list)
+        to_parse = filter(lambda c: c.wc in wc_list, config.configs)
     else:
         to_parse = config.configs
     for cfg in to_parse:
-        wikt = Wiktionary(cfg)  #TODO
-        wikt.parse_articles()  #TODO
+        wikt = Wiktionary(cfg)  # TODO
+        wikt.parse_articles()  # TODO
 
 
 def main():
@@ -43,7 +43,7 @@ def main():
         if arguments['--wikicodes']:
             extract_translations(fn=arguments['--wikicodes'])
         else:
-            extract_translations(wc_list=arguments['--wikicodes'])
+            extract_translations(wc_list=arguments['<wc>'])
 
 if __name__ == '__main__':
     main()
