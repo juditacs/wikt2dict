@@ -144,6 +144,6 @@ class ArticleParser(object):
         text = text.replace(']', '')
         text = text.replace('{', '')
         text = text.replace('}', '')
-        return text
+        return text.strip()
 
 
