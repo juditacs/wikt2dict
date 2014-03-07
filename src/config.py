@@ -174,4 +174,4 @@ class IcelandicConfig(WiktionaryConfig):
         ]
 
 
-configs = [EnglishConfig(), EsperantoConfig()]
+configs = [EnglishConfig(), EsperantoConfig(), IcelandicConfig()]
