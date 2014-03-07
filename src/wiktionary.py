@@ -56,7 +56,7 @@ class Wiktionary(object):
                 self.pairs.append([wc2, w2, wc1, w1, wc1, w1] + list(feat))
 
     def write_all_pairs(self):
-        for pair in self.pairs:
+        for pair in sorted(self.pairs):
             if self.cfg.verbose_output is True:
                 self.outf.write('\t'.join(pair).encode('utf8') + '\n')
             else:
