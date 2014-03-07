@@ -117,6 +117,30 @@ class LangnamesParserConfig(ParserConfig):
         self.features = ['langnames_parser']
         super(LangnamesParserConfig, self).__init__(wikt_cfg, parser_cfg)
 
+    @property
+    def bracket_re(self):
+        if not self._bracket_re:
+            self._bracket_re = re.compile(r'\([^)]*\)', re.UNICODE)
+        return self._bracket_re
+
+    @property
+    def delimiter_re(self):
+        if not self._delimiter_re:
+            self._delimiter_re = re.compile(self.translation_entity_delimiter,
+                                            re.UNICODE)
+        return self._delimiter_re
+
+
+class EnglishConfig(WiktionaryConfig):
+
+    def __init__(self):
+        super(EnglishConfig, self).__init__()
+        self.full_name = 'English'
+        self.wc = 'en'
+        self.parsers = [
+            (DefaultArticleParser, DefaultParserConfig()),
+        ]
+
 
 class EsperantoConfig(WiktionaryConfig):
 
@@ -124,17 +148,30 @@ class EsperantoConfig(WiktionaryConfig):
         super(EsperantoConfig, self).__init__()
         self.full_name = 'Esperanto'
         self.wc = 'eo'
-        self.default_cfg = DefaultParserConfig()
-        self.langnames_cfg = LangnamesParserConfig()
-        self.parsers = [#(DefaultArticleParser, self.default_cfg),
-                           (LangnamesArticleParser, self.langnames_cfg),
-                          ]
+        langnames_cfg = {
+            'translation_line': '\*\s*\{{([^}]+)}}:\s*(.+)',
+            'langnames': False,
+            'junk_re': re.compile(r'(:[^:]*:|\{\{|\}\}|xxx)', re.UNICODE),
+        }
+        self.langnames_cfg = LangnamesParserConfig(langnames_cfg)
+        self.parsers = [
+            (DefaultArticleParser, DefaultParserConfig()),
+            (LangnamesArticleParser, self.langnames_cfg),
+        ]
 
-    @property
-    def dump_path(self):
-        #TODO exception if path does not exist
-        return path.join(self.dump_path_base, self.full_name, self.dump_filename)
+
+class IcelandicConfig(WiktionaryConfig):
+
+    def __init__(self):
+        super(IcelandicConfig, self).__init__()
+        self.full_name = 'Icelandic'
+        self.wc = 'is'
+        default_cfg = {
+            'translation_prefix': ur'\xfe\xfd\xf0ing',
+        }
+        self.parsers = [
+            (DefaultArticleParser, DefaultParserConfig(default_cfg)),
+        ]
 
 
-configs = [EsperantoConfig()]
-
+configs = [EnglishConfig(), EsperantoConfig()]
