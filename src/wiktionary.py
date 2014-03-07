@@ -27,9 +27,10 @@ class Wiktionary(object):
             return
         pairs = list()
         for parser in self.parsers:
-            pairs.extend([(self.cfg.wc, title, wc2, word2)
-                          for wc2, word2 in parser.extract_translations(title, text)])
-        return pairs
+            for wc2, w2 in parser.extract_translations(title, text):
+                pair = ((self.cfg.wc, title, wc2, w2), tuple(parser.cfg.features))
+                pairs.append(pair)
+        return set(pairs)
 
     def skip_article(self, title, text):
         if not title.strip() or not text.strip():
@@ -39,21 +40,27 @@ class Wiktionary(object):
         return False
 
     def write_one_article_translations(self, pairs):
-        for p in pairs:
-            self.outf.write('\t'.join(p).encode('utf8') + '\n')
+        for pair in pairs:
+            if self.cfg.verbose_output is True:
+                self.outf.write('\t'.join(pair).encode('utf8') + '\n')
+            else:
+                self.outf.write('\t'.join(pair[0:4]).encode('utf8') + '\n')
 
     def store_translations(self, pairs):
-        for p in pairs:
-            wc1, w1, wc2, w2 = p[0:4]
+        for pair, feat in pairs:
+            wc1, w1, wc2, w2 = pair[0:4]
             if wc1 < wc2:
-                self.pairs.append(p)
+                # storing source article too
+                self.pairs.append([wc1, w1, wc2, w2, wc1, w1] + list(feat))
             else:
-                self.pairs.append((wc2, w2, wc1, w1))
+                self.pairs.append([wc2, w2, wc1, w1, wc1, w1] + list(feat))
 
     def write_all_pairs(self):
-        to_write = sorted(list(set(self.pairs)))
-        for pair in to_write:
-            self.outf.write('\t'.join(pair).encode('utf8') + '\n')
+        for pair in self.pairs:
+            if self.cfg.verbose_output is True:
+                self.outf.write('\t'.join(pair).encode('utf8') + '\n')
+            else:
+                self.outf.write('\t'.join(pair[0:4]).encode('utf8') + '\n')
 
     def read_dump(self):
         with open(self.cfg.dump_path) as f:

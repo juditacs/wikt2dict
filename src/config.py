@@ -7,6 +7,7 @@ wiktionary_defaults = {
     'dump_path_base': '../dat/wiktionary_2014_febr',
     'dump_file_postfix': 'wiktionary.txt',
     'output_file': 'translation_pairs',
+    'verbose_output': True,
 }
 
 parser_defaults = {
@@ -17,13 +18,15 @@ default_parser_defaults = {
     'translation_prefix': ur't[\u00f8\+\-]?',
     'wc_field': 1,
     'word_field': 2,
+    'features': ['defaultparser'],
 }
 
 langname_parser_defaults = {
     'language_name_field': 1,
     'translation_field': 2,
     'translation_entity_delimiter': ',',
-    'translation_re': re.compile(r'\[\[([^\[\]]+)\]\]', re.UNICODE)
+    'translation_re': re.compile(r'\[\[([^\[\]]+)\]\]', re.UNICODE),
+    'features': ['langnamesparser'],
 }
 
 
@@ -100,7 +103,6 @@ class DefaultParserConfig(ParserConfig):
     def __init__(self, wikt_cfg=None, parser_cfg=None):
         self.defaults.update(default_parser_defaults)
         self._trad_re = None
-        self.features = ['defaultparser']
         super(DefaultParserConfig, self).__init__(wikt_cfg, parser_cfg)
 
     @property
@@ -119,7 +121,6 @@ class LangnamesParserConfig(ParserConfig):
         self.defaults.update(langname_parser_defaults)
         self._bracket_re = None
         self._delimiter_re = None
-        self.features = ['langnames_parser']
         super(LangnamesParserConfig, self).__init__(wikt_cfg, parser_cfg)
 
     @property
