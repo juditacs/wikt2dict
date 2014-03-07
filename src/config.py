@@ -2,6 +2,7 @@ from article_parsers import DefaultArticleParser, LangnamesArticleParser
 import re
 from os import path
 
+base_dir = path.dirname(path.dirname(__file__))
 wiktionary_defaults = {
     'wikicodes_file': '../res/wikicodes',
     'dump_path_base': '../dat/wiktionary_2014_febr',
@@ -28,6 +29,7 @@ langname_parser_defaults = {
     'translation_entity_delimiter': ',',
     'translation_re': re.compile(r'\[\[([^\[\]]+)\]\]', re.UNICODE),
     'features': ['langnamesparser'],
+    'junk_re': None,
 }
 
 
@@ -161,6 +163,31 @@ class DefaultWiktionaryConfig(WiktionaryConfig):
         ]
 
 
+class LangnamesWiktionaryConfig(WiktionaryConfig):
+
+    def __init__(self):
+        super(LangnamesWiktionaryConfig, self).__init__()
+        try:
+            cfg = self.langnames_cfg
+        except AttributeError:
+            cfg = {}
+        self._parser_configs = [
+            [LangnamesArticleParser, LangnamesParserConfig, cfg]
+        ]
+
+
+class FinnishConfig(LangnamesWiktionaryConfig):
+
+    def __init__(self):
+        self.full_name = 'Finnish'
+        self.wc = 'fi'
+        self.langnames_cfg = {
+            'langnames': path.join(base_dir, 'res/langnames/finnish'),
+            'translation_line': r'\*\{{0,2}([^}]+)\}{0,2}:\s*(.*)',
+        }
+        super(FinnishConfig, self).__init__()
+
+
 class BasqueConfig(DefaultWiktionaryConfig):
 
     def __init__(self):
@@ -236,10 +263,9 @@ class EsperantoConfig(WiktionaryConfig):
             'langnames': False,
             'junk_re': re.compile(r'(:[^:]*:|\{\{|\}\}|xxx)', re.UNICODE),
         }
-        self.langnames_cfg = LangnamesParserConfig(langnames_cfg)
-        self.parsers = [
-            (DefaultArticleParser, DefaultParserConfig()),
-            (LangnamesArticleParser, self.langnames_cfg),
+        self._parser_configs = [
+            [LangnamesArticleParser, LangnamesParserConfig, langnames_cfg],
+            [DefaultArticleParser, DefaultParserConfig, {}]
         ]
 
 
@@ -469,7 +495,8 @@ configs = [
     DanishConfig(),
     DutchConfig(),
     EnglishConfig(),
-    #EsperantoConfig(),
+    EsperantoConfig(),
+    FinnishConfig(),
     FrenchConfig(),
     GalicianConfig(),
     GreekConfig(),
