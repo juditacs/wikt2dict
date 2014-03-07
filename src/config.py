@@ -6,6 +6,7 @@ wiktionary_defaults = {
     'wikicodes_file': '../res/wikicodes',
     'dump_path_base': '../dat/wiktionary_2014_febr',
     'dump_file_postfix': 'wiktionary.txt',
+    'output_file': 'translation_pairs',
 }
 
 parser_defaults = {
@@ -59,6 +60,10 @@ class WiktionaryConfig(DictLikeClass):
     @property
     def dump_path(self):
         return path.join(self.dump_path_base, self.full_name, self.dump_filename)
+
+    @property
+    def output_path(self):
+        return path.join(self.dump_path_base, self.full_name, self.output_file)
 
 
 class ParserConfig(DictLikeClass):
