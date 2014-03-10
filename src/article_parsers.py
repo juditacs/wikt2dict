@@ -14,8 +14,8 @@ class SectionAndArticleParser(ArticleParser):
     translation table.
     """
 
-    def __init__(self, wikt, filter_langs=None):
-        ArticleParser.__init__(self, wikt, filter_langs)
+    def __init__(self, wikt_cfg, parser_cfg, filter_langs=None):
+        ArticleParser.__init__(self, wikt_cfg, parser_cfg, filter_langs)
         self.init_section_parser(wikt)
         self.build_section_re()
         self.section_langfield = int(self.cfg.get('section_langfield', 0))
@@ -94,7 +94,7 @@ class LangnamesArticleParser(ArticleParser):
         self.langname_field = int(self.cfg['language_name_field'])
         self.translation_field = int(self.cfg['translation_field'])
         self.translation_line_re = re.compile(ur'' + \
-                   self.cfg['translation_line'].decode('utf8'), re.UNICODE)
+                   self.cfg['translation_line'], re.UNICODE)
         self.entity_delimiter = self.cfg['translation_entity_delimiter']
         #if self.cfg['skip_translation']:
             #self.skip_re_l = [i.decode('utf8') 
@@ -150,7 +150,7 @@ class LangnamesArticleParser(ArticleParser):
     def skip_entity(self, entity):
         if self.cfg.skip_translation_re.search(entity):
             return True
-        if self.cfg.junk_re.search(entity):
+        if self.cfg.junk_re and self.cfg.junk_re.search(entity):
             return True
         return False
 
@@ -217,10 +217,10 @@ class DefaultArticleParser(ArticleParser):
         translations = list()
         for tr in self.trad_re.finditer(text):
             wc = tr.group(self.cfg.wc_field)
-            if not wc.strip() or not wc in self.wikt_cfg.wikicodes:
+            if not wc or not wc.strip() or not wc in self.wikt_cfg.wikicodes:
                 continue
-            word = tr.group(self.cfg.word_field).replace('\n', ' ')
-            if not word.strip():
+            word = tr.group(self.cfg.word_field).strip()
+            if not word:
                 continue
             if self.skip_word(word):
                 continue
@@ -229,6 +229,8 @@ class DefaultArticleParser(ArticleParser):
 
     def skip_word(self, word):
         if self.cfg.skip_translation_re.search(word):
+            return True
+        if '\n' in word:
             return True
         return False
 
