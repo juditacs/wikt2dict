@@ -301,6 +301,19 @@ class HebrewConfig(LangnamesWiktionaryConfig):
         super(HebrewConfig, self).__init__()
 
 
+class IdoConfig(LangnamesWiktionaryConfig):
+
+    def __init__(self):
+        self.full_name = 'Ido'
+        self.wc = 'io'
+        self.langnames_cfg = {
+            'langnames': False,
+            'translation_line': r'\*\s*\{{([^}]+)}}:\s*(.+)',
+            'skip_translation': r'\*:\s*',
+        }
+        super(IdoConfig, self).__init__()
+
+
 class ChineseConfig(LangnamesWiktionaryConfig):
 
     def __init__(self):
@@ -718,6 +731,7 @@ configs = [
     HebrewConfig(),
     HungarianConfig(),
     IcelandicConfig(),
+    IdoConfig(),
     ItalianConfig(),
     IndonesianConfig(),
     KurdishConfig(),
