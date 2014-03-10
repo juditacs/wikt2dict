@@ -176,6 +176,18 @@ class LangnamesWiktionaryConfig(WiktionaryConfig):
         ]
 
 
+class EstonianConfig(LangnamesWiktionaryConfig):
+
+    def __init__(self):
+        self.full_name = 'Estonian'
+        self.wc = 'et'
+        self.langnames_cfg = {
+            'langnames': path.join(base_dir, 'res/langnames/estonian'),
+            'translation_line': r'\*\s*([^\s:]+)\s*:(.*)',
+        }
+        super(EstonianConfig, self).__init__()
+
+
 class PolishConfig(LangnamesWiktionaryConfig):
 
     def __init__(self):
@@ -188,6 +200,77 @@ class PolishConfig(LangnamesWiktionaryConfig):
             'translation_entity_delimiter': r',\|;',
         }
         super(PolishConfig, self).__init__()
+
+
+class RussianConfig(LangnamesWiktionaryConfig):
+
+    def __init__(self):
+        self.full_name = 'Russian'
+        self.wc = 'ru'
+        self.langnames_cfg = {
+            'langnames': False,
+            'translation_line': r'\|([^\=]+)\=\s*(.+)',
+            'translation_entity_delimiter': r',\|;',
+        }
+        super(RussianConfig, self).__init__()
+
+
+class UkranianConfig(RussianConfig):
+
+    def __init__(self):
+        super(UkranianConfig, self).__init__()
+        self.full_name = 'Ukrainian'
+        self.wc = 'uk'
+
+
+class SlovenianConfig(LangnamesWiktionaryConfig):
+
+    def __init__(self):
+        self.full_name = 'Slovenian'
+        self.wc = 'sl'
+        self.langnames_cfg = {
+            'langnames': path.join(base_dir, 'res/langnames/slovenian'),
+            'translation_line': r'\*\s*([^\s:]+)\s*:(.*)',
+            'translation_entity_delimiter': r',\|;',
+        }
+        super(SlovenianConfig, self).__init__()
+
+
+class MalagasyConfig(LangnamesWiktionaryConfig):
+
+    def __init__(self):
+        self.full_name = 'Malagasy'
+        self.wc = 'mg'
+        self.langnames_cfg = {
+            'langnames': path.join(base_dir, 'res/langnames/malagasy'),
+            'translation_line': r'\#\s*([^\s:]+)\s*:(.*)',
+        }
+        super(MalagasyConfig, self).__init__()
+
+
+class HebrewConfig(LangnamesWiktionaryConfig):
+
+    def __init__(self):
+        self.full_name = 'Hebrew'
+        self.wc = 'he'
+        self.langnames_cfg = {
+            'langnames': path.join(base_dir, 'res/langnames/hebrew'),
+            'translation_line': ur'{{\u05ea\|([^|}]+)\|([^}]+)}}',
+            'translation_re': re.compile(r'([^|]+)', re.UNICODE),
+        }
+        super(HebrewConfig, self).__init__()
+
+
+class ChineseConfig(LangnamesWiktionaryConfig):
+
+    def __init__(self):
+        self.full_name = 'Chinese'
+        self.wc = 'zh'
+        self.langnames_cfg = {
+            'langnames': False,
+            'translation_line': r'\*\s*\{{([^}]+)}}:\s*(.+)',
+        }
+        super(ChineseConfig, self).__init__()
 
 
 class ItalianConfig(LangnamesWiktionaryConfig):
@@ -447,7 +530,7 @@ class SlovakConfig(DefaultWiktionaryConfig):
 
     def __init__(self):
         self.full_name = 'Slovak'
-        self.wc = 'sl'
+        self.wc = 'sk'
         self.default_cfg = {
             'translation_prefix': 'P',
         }
@@ -531,17 +614,20 @@ configs = [
     BasqueConfig(),
     BulgarianConfig(),
     CatalanConfig(),
+    ChineseConfig(),
     CzechConfig(),
     CroatianConfig(),
     DanishConfig(),
     DutchConfig(),
     EnglishConfig(),
     EsperantoConfig(),
+    EstonianConfig(),
     FinnishConfig(),
     FrenchConfig(),
     GalicianConfig(),
     GreekConfig(),
     GeorgianConfig(),
+    HebrewConfig(),
     HungarianConfig(),
     IcelandicConfig(),
     ItalianConfig(),
@@ -549,16 +635,20 @@ configs = [
     KurdishConfig(),
     LatinConfig(),
     LimburgishConfig(),
+    MalagasyConfig(),
     NorwegianConfig(),
     OccitanConfig(),
     PolishConfig(),
     PortugueseConfig(),
     RomanianConfig(),
+    RussianConfig(),
     SerbianConfig(),
     SlovakConfig(),
+    SlovenianConfig(),
     SpanishConfig(),
     SwahiliConfig(),
     SwedishConfig(),
     TurkishConfig(),
+    UkranianConfig(),
     VietnameseConfig(),
 ]
