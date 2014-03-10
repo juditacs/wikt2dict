@@ -1,4 +1,4 @@
-from article_parsers import DefaultArticleParser, LangnamesArticleParser
+from article_parsers import DefaultArticleParser, LangnamesArticleParser, SectionAndArticleParser
 import re
 from os import path
 
@@ -14,6 +14,10 @@ wiktionary_defaults = {
 parser_defaults = {
     'blacklist': ['PAGENAME'],  # words that should not appear
     'placeholder': [],
+    # allow same language pairs
+    # issue with ltwiktionary: multiword articles have t+ templates
+    # for the words of the article title
+    'allow_synonyms': True,
 }
 
 default_parser_defaults = {
@@ -30,6 +34,11 @@ langname_parser_defaults = {
     'translation_re': re.compile(r'\[\[([^\[\]]+)\]\]', re.UNICODE),
     'features': ['langnamesparser'],
     'junk_re': None,
+}
+
+section_level_parser_defaults = {
+    'section_langfield': 1,
+    'features': ['sectionlevel'],
 }
 
 
@@ -148,6 +157,30 @@ class LangnamesParserConfig(ParserConfig):
             self._delimiter_re = re.compile(self.translation_entity_delimiter,
                                             re.UNICODE)
         return self._delimiter_re
+
+
+class SectionLevelParserConfig(ParserConfig):
+
+    def __init__(self, wikt_cfg=None, parser_cfg=None):
+        self.defaults.update(section_level_parser_defaults)
+        super(SectionLevelParserConfig, self).__init__(wikt_cfg, parser_cfg)
+
+
+class SectionLevelWiktionaryConfig(WiktionaryConfig):
+
+    def __init__(self):
+        self._section_parsers = None
+        self._section_parser_configs = None
+        super(SectionLevelWiktionaryConfig, self).__init__()
+
+    @property
+    def section_parsers(self):
+        if not self._section_parsers:
+            self._section_parsers = list()
+            if self._section_parser_configs:
+                for parser_cl, parser_cfg_cl, parser_cfg in self._section_parser_configs:
+                    self._section_parsers.append((parser_cl(self, parser_cfg_cl(parser_cfg))))
+        return self._section_parsers
 
 
 class DefaultWiktionaryConfig(WiktionaryConfig):
@@ -374,6 +407,53 @@ class EnglishConfig(DefaultWiktionaryConfig):
         self.full_name = 'English'
         self.wc = 'en'
         super(EnglishConfig, self).__init__()
+
+
+class GermanConfig(SectionLevelWiktionaryConfig):
+
+    def __init__(self):
+        super(GermanConfig, self).__init__()
+        self.full_name = 'German'
+        self.wc = 'de'
+        self.allow_synonyms = False
+        default_cfg = {
+            'trim_re': r'(.*)\#.*(.*)',
+            'translation_prefix': ur'[\xdc\xfc]',
+        }
+        self._section_parser_configs = [
+            [DefaultArticleParser, DefaultParserConfig, default_cfg]
+        ]
+        section_cfg = {
+            'parsers': [[DefaultArticleParser, DefaultParserConfig, default_cfg]],
+            'section_langmap': path.join(base_dir, 'res/langnames/german'),
+            'section_re': re.compile(r'==.*\(\{\{[Ss]prache\|(.+)\}\}\)\s*==', re.UNICODE),
+        }
+        self._parser_configs = [
+            [SectionAndArticleParser, SectionLevelParserConfig, section_cfg]
+        ]
+
+
+class LithuanianConfig(SectionLevelWiktionaryConfig):
+
+    def __init__(self):
+        super(LithuanianConfig, self).__init__()
+        self.full_name = 'Lithuanian'
+        self.wc = 'lt'
+        self.allow_synonyms = False
+        default_cfg = {
+            'trim_re': r'(.*)\#.*(.*)',
+        }
+        self._section_parser_configs = [
+            [DefaultArticleParser, DefaultParserConfig, default_cfg]
+        ]
+        section_cfg = {
+            'parsers': [[DefaultArticleParser, DefaultParserConfig, default_cfg]],
+            'section_langmap': False,
+            'section_re': re.compile(r'==\s*\{\{(.+)v\}\}\s*==', re.UNICODE),
+        }
+        self._parser_configs = [
+            [SectionAndArticleParser, SectionLevelParserConfig, section_cfg]
+        ]
 
 
 class EsperantoConfig(WiktionaryConfig):
@@ -625,6 +705,7 @@ configs = [
     FinnishConfig(),
     FrenchConfig(),
     GalicianConfig(),
+    GermanConfig(),
     GreekConfig(),
     GeorgianConfig(),
     HebrewConfig(),
@@ -634,6 +715,7 @@ configs = [
     IndonesianConfig(),
     KurdishConfig(),
     LatinConfig(),
+    LithuanianConfig(),
     LimburgishConfig(),
     MalagasyConfig(),
     NorwegianConfig(),
