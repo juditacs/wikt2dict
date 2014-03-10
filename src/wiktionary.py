@@ -27,8 +27,13 @@ class Wiktionary(object):
             return
         pairs = list()
         for parser in self.parsers:
-            for wc2, w2 in parser.extract_translations(title, text):
-                pair = ((self.cfg.wc, title, wc2, w2), tuple(parser.cfg.features))
+            for p in parser.extract_translations(title, text):
+                if len(p) == 2:
+                    pair = ((self.cfg.wc, title, wc2, w2), tuple(parser.cfg.features))
+                elif len(p) == 4:
+                    pair = (p, tuple(parser.cfg.features))
+                else:
+                    raise Exception('Invalid pair {0}'.format(p))
                 pairs.append(pair)
         return set(pairs)
 
@@ -42,7 +47,7 @@ class Wiktionary(object):
     def write_one_article_translations(self, pairs):
         for pair in pairs:
             if self.cfg.verbose_output is True:
-                self.outf.write('\t'.join(pair).encode('utf8') + '\n')
+                self.outf.write('\t'.join(pair[0]).encode('utf8') + '\n')
             else:
                 self.outf.write('\t'.join(pair[0:4]).encode('utf8') + '\n')
 
@@ -51,7 +56,7 @@ class Wiktionary(object):
             wc1, w1, wc2, w2 = pair[0:4]
             if wc1 < wc2:
                 # storing source article too
-                self.pairs.append([wc1, w1, wc2, w2, wc1, w1] + list(feat))
+                self.pairs.append([wc1, w1, wc2, w2, self.cfg.wc, w1] + list(feat))
             else:
                 self.pairs.append([wc2, w2, wc1, w1, wc1, w1] + list(feat))
 
