@@ -16,9 +16,9 @@ class SectionAndArticleParser(ArticleParser):
 
     def __init__(self, wikt_cfg, parser_cfg, filter_langs=None):
         ArticleParser.__init__(self, wikt_cfg, parser_cfg, filter_langs)
-        self.init_section_parser(wikt)
-        self.build_section_re()
-        self.section_langfield = int(self.cfg.get('section_langfield', 0))
+        #self.init_section_parser(wikt)
+        #self.build_section_re()
+        self.section_langfield = self.cfg.section_langfield
         self.read_section_langmap()
 
     def read_section_langmap(self):
@@ -30,7 +30,7 @@ class SectionAndArticleParser(ArticleParser):
         Otherwise wikicodes are used.
         """
         self.section_langmap = dict()
-        if self.cfg['uses_section_langnames'] == '1':
+        if self.cfg.section_langmap:
             f = open(self.cfg['section_langmap'])
             for l in f:
                 fields = l.strip().decode('utf8').split('\t')
@@ -39,7 +39,7 @@ class SectionAndArticleParser(ArticleParser):
                     self.section_langmap[langname.title()] = fields[0]
             f.close()
         else:
-            self.section_langmap = dict([(wc, wc) for wc in self.wikicodes])
+            self.section_langmap = dict([(wc, wc) for wc in self.wikt_cfg.wikicodes])
 
     def init_section_parser(self, wikt):
         type_ = self.cfg['section_parser']
@@ -60,6 +60,18 @@ class SectionAndArticleParser(ArticleParser):
                                          + r'([.\n]+)',
                                          re.UNICODE|re.MULTILINE)
    
+    def extract_translations(self, title, text):
+        translations = list()
+        for section_lang, section in self.get_sections(text):
+            for parser in self.wikt_cfg.section_parsers:
+                pairs = parser.extract_translations(title, section)
+                for p in pairs:
+                    if self.cfg.allow_synonyms is False and p[0] == section_lang:
+                        continue
+                    translations.extend([(section_lang, title, p[0], p[1])
+                                         for p in pairs])
+        return set(translations)
+
     def parse_article(self, article):
         if self.skip_article(article) == True:
             self.stats["skip_article"].append(article[0])
@@ -74,15 +86,21 @@ class SectionAndArticleParser(ArticleParser):
 
     def get_sections(self, text):
         section_titles_i = list()
-        for i, line in enumerate(text.split('\n')):
-            m = self.section_re.match(text)
+        lines = text.split('\n')
+        for i, line in enumerate(lines):
+            m = self.cfg.section_re.search(line)
             if m:
                 lang = m.group(self.section_langfield)
                 section_titles_i.append((i, lang))
+        if not section_titles_i:
+            return
         for i, (ind, lang) in enumerate(section_titles_i[:-1]):
             if lang in self.section_langmap:
                 yield self.section_langmap[lang], \
-                '\n'.join(text.split('\n')[ind:section_titles_i[i+1][0]])
+                    '\n'.join(lines[ind:section_titles_i[i + 1][0]])
+        last_lang = section_titles_i[-1][1]
+        if last_lang in self.section_langmap:
+            yield self.section_langmap[last_lang], '\n'.join(lines[section_titles_i[-1][0]:])
 
 
 class LangnamesArticleParser(ArticleParser):
