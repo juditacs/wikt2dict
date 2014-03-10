@@ -30,6 +30,7 @@ def extract_translations(wc_list=None):
     else:
         to_parse = config.configs
     for cfg in to_parse:
+        print cfg.wc
         wikt = Wiktionary(cfg)
         wikt.parse_articles()
 
