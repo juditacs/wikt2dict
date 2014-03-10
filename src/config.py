@@ -143,6 +143,7 @@ class LangnamesParserConfig(ParserConfig):
         self.defaults.update(langname_parser_defaults)
         self._bracket_re = None
         self._delimiter_re = None
+        self._translation_line_re = None
         super(LangnamesParserConfig, self).__init__(wikt_cfg, parser_cfg)
 
     @property
@@ -157,6 +158,12 @@ class LangnamesParserConfig(ParserConfig):
             self._delimiter_re = re.compile(self.translation_entity_delimiter,
                                             re.UNICODE)
         return self._delimiter_re
+
+    @property
+    def translation_line_re(self):
+        if not self._translation_line_re:
+            self._translation_line_re = re.compile(self.translation_line, re.UNICODE)
+        return self._translation_line_re
 
 
 class SectionLevelParserConfig(ParserConfig):
