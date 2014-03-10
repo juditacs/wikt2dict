@@ -456,7 +456,7 @@ class LithuanianConfig(SectionLevelWiktionaryConfig):
         section_cfg = {
             'parsers': [[DefaultArticleParser, DefaultParserConfig, default_cfg]],
             'section_langmap': False,
-            'section_re': re.compile(r'==\s*\{\{(.+)v\}\}\s*==', re.UNICODE),
+            'section_re': re.compile(r'^==\s*\{\{(.+)v\}\}\s*==$', re.UNICODE),
         }
         self._parser_configs = [
             [SectionAndArticleParser, SectionLevelParserConfig, section_cfg]
