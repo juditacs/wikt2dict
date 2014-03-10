@@ -29,7 +29,7 @@ class Wiktionary(object):
         for parser in self.parsers:
             for p in parser.extract_translations(title, text):
                 if len(p) == 2:
-                    pair = ((self.cfg.wc, title, wc2, w2), tuple(parser.cfg.features))
+                    pair = ((self.cfg.wc, title, p[0], p[1]), tuple(parser.cfg.features))
                 elif len(p) == 4:
                     pair = (p, tuple(parser.cfg.features))
                 else:
