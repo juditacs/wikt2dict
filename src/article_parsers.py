@@ -141,7 +141,7 @@ class DefaultArticleParser(ArticleParser):
             if self.skip_word(word):
                 continue
             translations.append((wc, word))
-        return translations
+        return set(translations)
 
     def skip_word(self, word):
         if self.cfg.skip_translation_re.search(word):
