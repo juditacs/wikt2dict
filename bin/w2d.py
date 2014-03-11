@@ -22,7 +22,7 @@ def download_wiktionaries(fn=None, wc_list=None):
     logger.info('Downloading Wiktionaries')
 
 
-def extract_translations(wc_list=None):
+def extract_translations(wc_list=None, fn=None):
     logger.info('Extracting translations')
     import config
     if wc_list:
