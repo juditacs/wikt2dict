@@ -7,13 +7,13 @@ wiktionary_defaults = {
     'wikicodes_file': '../res/wikicodes',
     'dump_path_base': '../dat/wiktionary_2014_febr',
     'dump_file_postfix': 'wiktionary.txt',
-    'output_file': 'translation_pairs',
+    'output_file': 'translation_pairs2',
     'verbose_output': True,
 }
 
 parser_defaults = {
     'blacklist': ['PAGENAME'],  # words that should not appear
-    'placeholder': [],
+    'placeholder': '',
     # allow same language pairs
     # issue with ltwiktionary: multiword articles have t+ templates
     # for the words of the article title
@@ -106,11 +106,15 @@ class ParserConfig(DictLikeClass):
 
     @property
     def skip_translation_re(self):
-        if not self._skip_trans_re:
-            self._skip_trans_re = re.compile(
-                ur'(' + '|'.join(self.blacklist) +
-                '|'.join(self.placeholder) + ')',
-                re.UNICODE)
+        if self._skip_trans_re is None:
+            if self.placeholder:
+                self.blacklist.append(self.placeholder)
+            if self.blacklist:
+                self._skip_trans_re = re.compile(
+                    ur'(' + '|'.join(self.blacklist) + ')',
+                    re.UNICODE)
+            else:
+                self._skip_trans_re = ''
         return self._skip_trans_re
 
     def __setitem__(self, key, value):
@@ -133,7 +137,7 @@ class DefaultParserConfig(ParserConfig):
             self._trad_re = re.compile(r'\{\{' + self.translation_prefix +
                                        r'\|([^}|]+)\|'  # wikicode
                                        r'([^}|]*)'  # word
-                                       r'(\|[^}]*)*\}\}', re.UNICODE)  # rest
+                                       r'(?:\|([^}|]*))*\}\}', re.UNICODE)  # rest
         return self._trad_re
 
 
@@ -621,7 +625,8 @@ class SerbianConfig(DefaultWiktionaryConfig):
         self.wc = 'sr'
         self.default_cfg = {
             'translation_prefix': u'\u041f',
-            'word_field': -1,
+            'word_field': 3,
+            'placeholder': 'XXX',
         }
         super(SerbianConfig, self).__init__()
 
