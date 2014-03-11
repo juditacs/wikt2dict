@@ -135,16 +135,17 @@ class DefaultArticleParser(ArticleParser):
             wc = tr.group(self.cfg.wc_field)
             if not wc or not wc.strip() or not wc in self.wikt_cfg.wikicodes:
                 continue
-            word = tr.group(self.cfg.word_field).strip()
-            if not word:
+            word = tr.group(self.cfg.word_field)
+            if not word or not word.strip():
                 continue
+            word = word.strip()
             if self.skip_word(word):
                 continue
             translations.append((wc, word))
         return set(translations)
 
     def skip_word(self, word):
-        if self.cfg.skip_translation_re.search(word):
+        if self.cfg.skip_translation_re and self.cfg.skip_translation_re.search(word):
             return True
         if '\n' in word:
             return True
