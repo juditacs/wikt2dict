@@ -2,7 +2,7 @@
 
 Usage:
     find_anomalies.py punct [--num=N]
-    find_anomalies.py unigram <unigram_file> [--] <prob_threshold>
+    find_anomalies.py unigram <unigram_file> [--whitelist=<whlist>...] [--] <prob_threshold>
 
 Options:
     -n --num=N          Number of weird characters [default: 1].
@@ -38,6 +38,8 @@ def scan_stdin(args):
             if args['unigram']:
                 if not wc1 in sum_ or not wc2 in sum_:
                     stderr.write('INVALID, unknown language: {0}'.format(l))
+                    continue
+                if wc1 in args['--whitelist'] or wc2 in args['--whitelist']:
                     continue
                 prob1 = 0.0
                 prob2 = 0.0
