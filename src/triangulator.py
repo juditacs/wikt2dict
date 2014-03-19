@@ -2,29 +2,26 @@ from os import path, listdir, makedirs
 from collections import defaultdict
 from itertools import product
 
-from handlers import ConfigHandler, LogHandler
+import config
+
 
 class Triangulator(object):
 
-    def __init__(self, triangle_wc, cfg_fn):
+    def __init__(self, triangle_wc):
         self.wikicodes = set(triangle_wc)
-        self.cfg_general = ConfigHandler("general", cfg_fn)
-        self.log_handler = LogHandler(self.cfg_general)
-        self.pairs = defaultdict(lambda: defaultdict(lambda:
-                     defaultdict(lambda: defaultdict(list))))
+        self.cfg = config.WiktionaryConfig()
+        self.pairs = defaultdict(lambda: defaultdict(
+            lambda: defaultdict(lambda: defaultdict(list))))
         self.triangles = defaultdict(list)
-        self.read_three_configs(cfg_fn)
         self.read_pairs_in_three_langs()
 
     def read_pairs_in_three_langs(self):
-        for wc in self.wikicodes:
-            if not self.cfg[wc]:
-                continue
-            fn = self.cfg_general['dumpdir'] + '/' + self.cfg[wc]['fullname'] + \
-                    '/' + self.cfg_general['word_pairs_outfile']
-            if not path.exists(fn):
-                continue
-            self.read_pairs_in_lang(wc, fn)
+        for wc in self.wikicodes | set(['de', 'lt']):
+            try:
+                cfg = config.get_config_by_wc(wc)
+                self.read_pairs_in_lang(wc, cfg.output_path)
+            except IndexError:
+                pass
 
     def read_pairs_in_lang(self, wc, fn):
         f = open(fn)
@@ -33,23 +30,20 @@ class Triangulator(object):
             if len(fd) < 6:
                 continue
             wc1, w1, wc2, w2, src_wc, src_art = fd[0:6]
-            # converting Mandarin Chinese to Chinese 
+            # converting Mandarin Chinese to Chinese
             if wc1 == 'cmn':
                 wc1 = 'zh'
             if wc2 == 'cmn':
                 wc2 = 'zh'
+            if not wc1 in self.wikicodes and not wc2 in self.wikicodes:
+                continue
             if wc1 < wc2:
                 self.pairs[wc1][w1][wc2][w2].append((src_wc, src_art))
             else:
                 self.pairs[wc2][w2][wc1][w1].append((src_wc, src_art))
-            
-    def read_three_configs(self, cfg_fn):
-        self.cfg = dict()
-        for wc in self.wikicodes:
-            self.cfg[wc] = ConfigHandler(wc, cfg_fn)
 
     def collect_triangles(self):
-        for wc2 in self.wikicodes: # this is the bridge language
+        for wc2 in self.wikicodes:  # this is the bridge language
             wc1, wc3 = sorted([w for w in self.wikicodes if not w == wc2])
             for w2, tr in self.pairs[wc2].iteritems():
                 for w1, src1_l in tr[wc1].iteritems():
@@ -67,31 +61,27 @@ class Triangulator(object):
         if not path.exists(dir_):
             makedirs(dir_)
         for wc2 in self.wikicodes:
+            out_str = ''
             wc1, wc3 = sorted([w for w in self.wikicodes if not w == wc2])
-            fn = dir_ + '/' + '_'.join([wc1, wc2, wc3])
-            f = open(fn, 'w+')
-            min_cnt = int(self.cfg_general['triangle_threshold'])
+            min_cnt = int(self.cfg.triangle_threshold)
             for tri, sources in self.triangles.iteritems():
                 if not tri[0] == wc1 or not tri[2] == wc3:
                     continue
-                # skip if appears in the original data
-                if self.cfg_general['only_new_triangles'] and \
-                   tri[3] in self.pairs[wc1][tri[1]][wc3]:
-                    continue
                 if len(sources) >= min_cnt:
                     for s in set(sources):
-                        f.write('\t'.join(tri).encode('utf8') + '\t' + 
-                                '\t'.join(s).encode('utf8') + '\n')
-            f.close()
+                        out_str += ('\t'.join(tri).encode('utf8') + '\t' +
+                                    '\t'.join(s).encode('utf8') + '\n')
+            if out_str:
+                with open(dir_ + '/' + '_'.join([wc1, wc2, wc3]), 'w') as f:
+                    f.write(out_str)
 
     def get_dir(self):
         i = 0
         file_cnt = 1000
         while file_cnt >= 998:
-            dir_ = self.cfg_general['triangle_dir'] + '/' + str(i)
+            dir_ = self.cfg['triangle_dir'] + '/' + str(i)
             i += 1
             if not path.exists(dir_):
                 break
             file_cnt = len([name for name in listdir(dir_)])
         return dir_
-
