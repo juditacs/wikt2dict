@@ -2,21 +2,20 @@ from collections import defaultdict
 from os import listdir
 from sys import stdin, stderr
 import logging
+import config
+
 
 class Evaluator(object):
-    """ This is a collection of methods for evaluating the results of 
-    triangulation. Most methods add features to the triangles """
 
-    def __init__(self, cfg):
+    def __init__(self):
         self.wikt = defaultdict(lambda: defaultdict(lambda:
-                     defaultdict(lambda: defaultdict(int))))
+                                                    defaultdict(lambda: defaultdict(int))))
 
-        self.cfg = cfg
+        self.cfg = config.WiktionaryConfig()
         self.edge_gran = range(11) + [20, 30]
         self.pivot_gran = self.edge_gran
 
-        with open(self.cfg['wikicodes']) as f:
-            self.wikicodes = sorted([w.strip() for w in f])
+        self.wikicodes = sorted(self.cfg.wikicodes)
         self.feat_order = []
         self.feat_order.extend(['left_' + wc for wc in self.wikicodes])
         self.feat_order.extend(['right_' + wc for wc in self.wikicodes])
@@ -44,8 +43,8 @@ class Evaluator(object):
     def read_all_wiktionary(self):
         for lang in listdir(self.cfg['dumpdir']):
             logging.info(lang)
-            self.read_wiktionary(self.cfg['dumpdir'] + '/' + lang + 
-                                '/' + self.cfg['word_pairs_outfile'])
+            self.read_wiktionary(self.cfg['dumpdir'] + '/' + lang +
+                                 '/' + self.cfg['word_pairs_outfile'])
 
     def read_wiktionary(self, fn):
         try:
@@ -68,8 +67,8 @@ class Evaluator(object):
                 logging.exception('Exception at line: {0}'.format(l.strip()))
 
     def get_ordered_pair(self, fields):
-        """ Order pairs alphabetically by Wiktionary codes. 
-        TODO this method should be moved to a static class containing 
+        """ Order pairs alphabetically by Wiktionary codes.
+        TODO this method should be moved to a static class containing
         often used methods """
         wc1, w1, wc2, w2 = fields
         if wc1 == 'cmn':
@@ -122,7 +121,7 @@ class Evaluator(object):
                 logging.exception('Exception at line: {0}'.format(l.strip()))
         feat, pair = self.featurize_group(tri_group)
         self.print_pair_with_features(pair, feat)
-               
+
     def print_pair_with_features(self, pair, feat):
         out = u''
         out += '\t'.join(pair) + '\t'
@@ -149,23 +148,23 @@ class Evaluator(object):
         self.map_int_feature_to_binaries('right', len(right), self.edge_gran, feats)
         self.map_int_feature_to_binaries('pivot', len(pivots), self.pivot_gran, feats)
         pivot_langs = len(set([lang for lang, _ in pivots]))
-        self.map_int_feature_to_binaries('pivot_langs', pivot_langs, 
+        self.map_int_feature_to_binaries('pivot_langs', pivot_langs,
                                          self.pivot_gran, feats)
         left_langs = set([lang for lang, _ in left])
-        self.map_int_feature_to_binaries('left_langs', len(left_langs), 
+        self.map_int_feature_to_binaries('left_langs', len(left_langs),
                                          self.edge_gran, feats)
         right_langs = set([lang for lang, _ in right])
-        self.map_int_feature_to_binaries('right_langs', len(right_langs), 
+        self.map_int_feature_to_binaries('right_langs', len(right_langs),
                                          self.edge_gran, feats)
         self.map_int_feature_to_binaries('left_disjunct', len(left_langs - right_langs), self.edge_gran, feats)
         self.map_int_feature_to_binaries('right_disjunct', len(right_langs - left_langs), self.edge_gran, feats)
         self.add_wc_features(pair, feats)
 
-        self.map_int_feature_to_binaries_by_wc('_pivot', pivots, 
+        self.map_int_feature_to_binaries_by_wc('_pivot', pivots,
                                                self.pivot_gran, feats)
-        self.map_int_feature_to_binaries_by_wc('_left', left, 
+        self.map_int_feature_to_binaries_by_wc('_left', left,
                                                self.edge_gran, feats)
-        self.map_int_feature_to_binaries_by_wc('_right', right, 
+        self.map_int_feature_to_binaries_by_wc('_right', right,
                                                self.edge_gran, feats)
         return feats, pair
 
@@ -174,7 +173,7 @@ class Evaluator(object):
         for wc, _ in vals:
             val_wc[wc] += 1
         for wc in self.wikicodes:
-            self.map_int_feature_to_binaries(wc + pre, val_wc[wc], 
+            self.map_int_feature_to_binaries(wc + pre, val_wc[wc],
                                              granularity, feat_dict)
 
     def add_wc_features(self, pair, feat_dict):
@@ -188,7 +187,7 @@ class Evaluator(object):
             else:
                 feat_dict[wc + '_right'] = 0
 
-    def map_int_feature_to_binaries(self, feat_prefix, val, granularity, feat_dict, 
+    def map_int_feature_to_binaries(self, feat_prefix, val, granularity, feat_dict,
                                     mode='le'):
         for i in granularity:
             feat_name = feat_prefix + '_' + str(i)
@@ -198,5 +197,3 @@ class Evaluator(object):
                 feat_dict[feat_name] = 1
             else:
                 feat_dict[feat_name] = 0
-
-
