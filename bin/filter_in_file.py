@@ -14,7 +14,7 @@ def main():
     cnt = 0
     for l in stdin:
         cnt += 1
-        if cnt % 100000 == 0:
+        if cnt % 1000000 == 0:
             stderr.write('{0}\n'.format(cnt))
         fd = l.decode('utf8').strip().lower().split('\t')
         if len(fd) < 4:
