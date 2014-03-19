@@ -764,3 +764,11 @@ configs = [
     UkranianConfig(),
     VietnameseConfig(),
 ]
+
+
+def get_config_by_wc(wc):
+    cfg_l = filter(lambda x: x.wc == wc, configs)
+    if len(cfg_l) > 1:
+        # TODO raise exception
+        pass
+    return cfg_l[0]
