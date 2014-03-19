@@ -15,13 +15,14 @@ import re
 import string
 import math
 
-punct_ok = set('-\'.')
+punct_ok = set('-\'.,?"')
 punct = ''.join(set(string.punctuation) - punct_ok)
 punct_re = re.compile(r'[{0}]'.format(re.escape(punct)),
-                     re.UNICODE)
+                      re.UNICODE)
 
 unigrams = defaultdict(lambda: defaultdict(int))
 sum_ = defaultdict(int)
+
 
 def scan_stdin(args):
     stats = {'punct': 0, 'punct ok': 0, 'sum': 0, 'invalid': 0}
