@@ -32,7 +32,7 @@ def scan_stdin(args):
             wc1, w1, wc2, w2 = l.decode('utf8').strip().split('\t')[0:4]
             if args['punct']:
                 if abs(len(punct_re.findall(w1)) - len(punct_re.findall(w2))) >= int(args['--num']):
-                    print('PUNCTUATION: {0}'.format(l.strip()))
+                    print(l.strip())
                     stats['punct'] += 1
                 else:
                     stats['punct ok'] += 1
@@ -51,7 +51,7 @@ def scan_stdin(args):
                     prob2 += math.log(float(unigrams[wc2][c]) / sum_[wc2])
                 prob2 /= len(w2)
                 if prob1 < int(args['<prob_threshold>']) or prob2 < int(args['<prob_threshold>']):
-                    print('UNIGRAM: {0}\t{1}\t{2}'.format(prob1, prob2, l.strip()))
+                    print(l.strip())
         except ValueError:
             stats['invalid'] += 1
             stderr.write('INVALID: {0}'.format(l))
@@ -63,6 +63,7 @@ def read_unigrams(fn):
             wc, c, cnt = l.decode('utf8').split('\t')
             unigrams[wc][c] = int(cnt)
             sum_[wc] += int(cnt)
+
 
 def main():
     args = docopt(__doc__, version="Wikt2Dict - Find anomalies 1.0")
