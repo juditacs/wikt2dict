@@ -9,6 +9,10 @@ wiktionary_defaults = {
     'dump_file_postfix': 'wiktionary.txt',
     'output_file': 'translation_pairs2',
     'verbose_output': True,
+    'triangle_threshold': 0,
+    'triangle_dir': '../dat/triangle_2014_febr3',
+    'triangle_verbose': True,
+    'only_new_triangles': False,
 }
 
 parser_defaults = {
