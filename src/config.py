@@ -5,12 +5,12 @@ from os import path
 base_dir = path.dirname(path.dirname(__file__))
 wiktionary_defaults = {
     'wikicodes_file': '../res/wikicodes',
-    'dump_path_base': '../dat/wiktionary_2014_febr',
+    'dump_path_base': '../dat/wiktionary',
     'dump_file_postfix': 'wiktionary.txt',
-    'output_file': 'translation_pairs2',
+    'output_file': 'translation_pairs',
     'verbose_output': True,
     'triangle_threshold': 0,
-    'triangle_dir': '../dat/triangle_2014_febr3',
+    'triangle_dir': '../dat/triangle',
     'triangle_verbose': True,
     'only_new_triangles': False,
 }
