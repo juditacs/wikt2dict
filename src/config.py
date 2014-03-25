@@ -1,7 +1,21 @@
+"""
+This file contains all configuration necessary for wikt2dict.
+Each Wiktionary edition has a configuration class associated with it.
+Since Wiktionary editions tend to have similarities, these classes are
+subclasses of general configuration classes.
+I know that modifying the configuration is more difficult than
+in a plain text configuration file, and I do apologize for it,
+but it's much easier to use a Python configuration and gives a whole
+lot of new features.
+"""
 from article_parsers import DefaultArticleParser, LangnamesArticleParser, SectionAndArticleParser
 import re
 from os import path
 
+"""
+Here are the default parameters for configuration base classes.
+They can be and are overriden in many classes.
+"""
 base_dir = path.dirname(path.dirname(__file__))
 wiktionary_defaults = {
     'wikicodes_file': '../res/wikicodes',
@@ -47,7 +61,10 @@ section_level_parser_defaults = {
 
 
 class DictLikeClass(object):
-
+    """
+    All classes inherit this class so that configurations
+    can be used as dictionaries.
+    """
     def __getitem__(self, key):
         return self.__dict__.get(key, None)
 
@@ -56,7 +73,10 @@ class DictLikeClass(object):
 
 
 class WiktionaryConfig(DictLikeClass):
-
+    """
+    This is the default WiktionaryConfig that each edition's
+    configuration class inherits.
+    """
     def __init__(self):
         for key, value in wiktionary_defaults.iteritems():
             self[key] = value
@@ -85,6 +105,7 @@ class WiktionaryConfig(DictLikeClass):
 
     @property
     def parsers(self):
+        """ The parsers need to be initialized exactly once. """
         if not self._parsers:
             self._parsers = list()
             if self._parser_configs:
