@@ -22,8 +22,9 @@ def main():
     for wc, stat in sorted(stats.iteritems(), key=lambda x: -len(x[1]))[0:topN]:
         var += (len(stat) - E) ** 2
     print E
-    print math.sqrt(var / float(topN))
+    print 'var: ' + str(math.sqrt(var / float(topN)) / fourlang_len)
     print s / float(topN)
+    print s / float(topN) / fourlang_len
 
 
 if __name__ == '__main__':
