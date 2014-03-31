@@ -24,23 +24,25 @@ class Triangulator(object):
                 pass
 
     def read_pairs_in_lang(self, wc, fn):
-        f = open(fn)
-        for l in f:
-            fd = l.decode('utf8').strip().split('\t')
-            if len(fd) < 6:
-                continue
-            wc1, w1, wc2, w2, src_wc, src_art = fd[0:6]
-            # converting Mandarin Chinese to Chinese
-            if wc1 == 'cmn':
-                wc1 = 'zh'
-            if wc2 == 'cmn':
-                wc2 = 'zh'
-            if not wc1 in self.wikicodes and not wc2 in self.wikicodes:
-                continue
-            if wc1 < wc2:
-                self.pairs[wc1][w1][wc2][w2].append((src_wc, src_art))
-            else:
-                self.pairs[wc2][w2][wc1][w1].append((src_wc, src_art))
+        if not path.exists(fn):
+            return
+        with open(fn) as f:
+            for l in f:
+                fd = l.decode('utf8').strip().split('\t')
+                if len(fd) < 6:
+                    continue
+                wc1, w1, wc2, w2, src_wc, src_art = fd[0:6]
+                # converting Mandarin Chinese to Chinese
+                if wc1 == 'cmn':
+                    wc1 = 'zh'
+                if wc2 == 'cmn':
+                    wc2 = 'zh'
+                if not wc1 in self.wikicodes and not wc2 in self.wikicodes:
+                    continue
+                if wc1 < wc2:
+                    self.pairs[wc1][w1][wc2][w2].append((src_wc, src_art))
+                else:
+                    self.pairs[wc2][w2][wc1][w1].append((src_wc, src_art))
 
     def collect_triangles(self):
         for wc2 in self.wikicodes:  # this is the bridge language
