@@ -8,7 +8,7 @@ in a plain text configuration file, and I do apologize for it,
 but it's much easier to use a Python configuration and gives a whole
 lot of new features.
 """
-from article_parsers import DefaultArticleParser, LangnamesArticleParser, SectionAndArticleParser
+from wikt2dict.article_parsers import DefaultArticleParser, LangnamesArticleParser, SectionAndArticleParser
 import re
 from os import path
 

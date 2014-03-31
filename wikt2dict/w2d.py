@@ -14,8 +14,9 @@ from sys import stderr
 from itertools import combinations
 import logging
 
-from wiktionary import Wiktionary
-from triangulator import Triangulator
+from wikt2dict.wiktionary import Wiktionary
+from wikt2dict.triangulator import Triangulator
+import wiktionary.config as config
 
 logger = logging.getLogger('wikt2dict')
 
@@ -27,7 +28,6 @@ def download_wiktionaries(fn=None, wc_list=None):
 
 def extract_translations(wc_list=None, fn=None):
     logger.info('Extracting translations')
-    import config
     if wc_list:
         to_parse = filter(lambda c: c.wc in wc_list, config.configs)
     else:

@@ -1,4 +1,4 @@
-from article import ArticleParser
+from wikt2dict.article import ArticleParser
 
 
 class SectionAndArticleParser(ArticleParser):

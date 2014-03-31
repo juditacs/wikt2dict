@@ -2,7 +2,7 @@ from collections import defaultdict
 from os import listdir
 from sys import stdin, stderr
 import logging
-import config
+import wikt2dict.config as config
 
 
 class Evaluator(object):

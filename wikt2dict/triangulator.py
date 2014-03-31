@@ -2,7 +2,7 @@ from os import path, listdir, makedirs
 from collections import defaultdict
 from itertools import product
 
-import config
+import wikt2dict.config as config
 
 
 class Triangulator(object):
