@@ -21,10 +21,10 @@ wiktionary_defaults = {
     'wikicodes_file': path.join(base_dir, '../res/wikicodes'),
     'dump_path_base': path.join(base_dir, '../dat/wiktionary'),
     'dump_file_postfix': 'wiktionary.txt',
-    'output_file': path.join(base_dir, '../translation_pairs'),
+    'output_file': 'translation_pairs',
     'verbose_output': True,
     'triangle_threshold': 0,
-    'triangle_dir': 'dat/triangle',
+    'triangle_dir': path.join(base_dir, '../dat/triangle'),
     'triangle_verbose': True,
     'only_new_triangles': False,
 }
