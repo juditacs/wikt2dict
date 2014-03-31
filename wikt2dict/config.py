@@ -16,15 +16,15 @@ from os import path
 Here are the default parameters for configuration base classes.
 They can be and are overriden in many classes.
 """
-base_dir = path.dirname(path.dirname(__file__))
+base_dir = path.dirname(__file__)
 wiktionary_defaults = {
-    'wikicodes_file': '../res/wikicodes',
-    'dump_path_base': '../dat/wiktionary',
+    'wikicodes_file': path.join(base_dir, '../res/wikicodes'),
+    'dump_path_base': path.join(base_dir, '../dat/wiktionary'),
     'dump_file_postfix': 'wiktionary.txt',
-    'output_file': 'translation_pairs',
+    'output_file': path.join(base_dir, '../translation_pairs'),
     'verbose_output': True,
     'triangle_threshold': 0,
-    'triangle_dir': '../dat/triangle',
+    'triangle_dir': 'dat/triangle',
     'triangle_verbose': True,
     'only_new_triangles': False,
 }
