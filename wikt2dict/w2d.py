@@ -21,17 +21,14 @@ import wikt2dict.config as config
 logger = logging.getLogger('wikt2dict')
 
 
-def download_wiktionaries(fn=None, wc_list=None):
+def download_wiktionaries(wc_set):
     # TODO
     logger.info('Downloading Wiktionaries')
 
 
-def extract_translations(wc_list=None, fn=None):
+def extract_translations(wc_set):
     logger.info('Extracting translations')
-    if wc_list:
-        to_parse = filter(lambda c: c.wc in wc_list, config.configs)
-    else:
-        to_parse = config.configs
+    to_parse = filter(lambda c: c.wc in wc_set, config.configs)
     for cfg in to_parse:
         print cfg.wc
         wikt = Wiktionary(cfg)
@@ -59,15 +56,9 @@ def main():
     else:
         wc_set = set(arguments['<wc>'])
     if arguments['download']:
-        if arguments['--wikicodes']:
-            download_wiktionaries(fn=arguments['--wikicodes'])
-        else:
-            download_wiktionaries(wc_list=arguments['--wikicodes'])
+        download_wiktionaries(wc_set)
     if arguments['extract']:
-        if arguments['--wikicodes']:
-            extract_translations(fn=arguments['--wikicodes'])
-        else:
-            extract_translations(wc_list=arguments['<wc>'])
+        extract_translations(wc_set)
     if arguments['triangulate']:
         triangulate(wc_set)
 
