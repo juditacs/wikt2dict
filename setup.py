@@ -12,4 +12,5 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=['docopt'],
+    scripts=['wikt2dict/w2d.py'],
 )
