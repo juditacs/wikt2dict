@@ -16,7 +16,7 @@ import logging
 
 from wikt2dict.wiktionary import Wiktionary
 from wikt2dict.triangulator import Triangulator
-import wiktionary.config as config
+import wikt2dict.config as config
 
 logger = logging.getLogger('wikt2dict')
 
