@@ -10,7 +10,7 @@ lot of new features.
 """
 from wikt2dict.article_parsers import DefaultArticleParser, LangnamesArticleParser, SectionAndArticleParser
 import re
-from os import path
+from os import path, makedirs
 
 """
 Here are the default parameters for configuration base classes.
@@ -100,6 +100,8 @@ class WiktionaryConfig(DictLikeClass):
 
     @property
     def bz2_path(self):
+        if not path.exists(self.dump_path_base):
+            makedirs(self.dump_path_base)
         return path.join(self.dump_path_base, self.wc + '.bz2')
 
     @property
@@ -108,10 +110,16 @@ class WiktionaryConfig(DictLikeClass):
 
     @property
     def dump_path(self):
-        return path.join(self.dump_path_base, self.full_name, self.dump_filename)
+        prefix = path.join(self.dump_path_base, self.full_name)
+        if not path.exists(prefix):
+            makedirs(prefix)
+        return path.join(prefix, self.dump_filename)
 
     @property
     def output_path(self):
+        prefix = path.join(self.dump_path_base, self.full_name)
+        if not path.exists(prefix):
+            makedirs(prefix)
         return path.join(self.dump_path_base, self.full_name, self.output_file)
 
     @property
