@@ -18,7 +18,9 @@ from wikt2dict.wiktionary import Wiktionary
 from wikt2dict.triangulator import Triangulator
 import wikt2dict.config as config
 
+logging.basicConfig()
 logger = logging.getLogger('wikt2dict')
+logger.setLevel(logging.INFO)
 
 
 def download_wiktionaries(wc_set):
