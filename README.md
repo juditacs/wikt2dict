@@ -8,129 +8,70 @@ generate new ones.
 
 ## News
 
+* Changed interface. See below for details (April 2014)
 * Added support for German Wiktionary (Aug 2013)
 * Had a poster at the Building and Using Comparable Corpora Workshop (BUCC) at ACL13, updated Bibtex accordingly
   * The paper is available here: http://www.aclweb.org/anthology-new/W/W13/W13-2507.pdf
 * All dictionaries are available here: http://hlt.sztaki.hu/resources
 
-## Very quick start
+## Requirements
 
-I created a quick\_test.sh script for lazy people to test the Wiktionary extraction right away without having to read the whole README.
-Just enter the directory bin after cloning and run
-
-    bash quick_test.sh la
-
-where 'la' is the Wiktionary code of the Latin Wiktionary. You can replace it with another that has been configured.
-It might take a few minutes.
-The results are in the ```../dat/Wiktionary/Latin/word_pairs``` file. The first four columns contain the word pairs, you can ignore the rest. 
-
-If you have enough storage (6-7GB), try running on the English Wiktionary:
-
-    bash quick_test.sh en
+Wikt2dict should run on any mainstream Linux distribution. It needs Python2.7 and basic command line
+tools that should be found on most Linux distributions (wget, bzcat).
+If you're working with large Wiktionaries such as the English Wiktionary, you need at least 10GB of
+free space, preferrably more.
+For all Wiktionary editions supported, you need about 35GB of free space.
 
 ## Installation
 
-Checkout the repository from GitHub to a directory with at lot of free space.
-The amount of free space required depends on the number and size of Wiktionaries
-you want to download (for all 40 you will need about 30GB).
-
     git clone https://github.com/juditacs/wikt2dict.git
+    sudo pip intall wikt2dict
 
-Enter the wikt2dict/src directory: 
+You can install wikt2dict in virtualenv if you do not have root access.
+
+A very quick guide to virtualenv:
+
+    virtualenv w2d_env
+    source w2d_env/bin/activate
+    git clone https://github.com/juditacs/wikt2dict.git
+    pip intall wikt2dict
+
+Note that this way wikt2dict can only be used once the virtualenv was activated.
+You need to run source w2d\_env/bin/activate every time you login.
+
+## Very quick start
+
+Wikt2dict's basic functionalities can be accessed using the w2d.py script (which should be directly callable after running pip install).
+
+    $ w2d.py -h
+    Wikt2Dict
     
-    cd wikt2dict/src
-
-Set the PYTHONPATH environment variable to the directory where you are right now:
-
-    export PYTHONPATH=$PYTHONPATH:$(pwd)
-
-Update: this command can be omitted in the latest version.
-
-Enter the root directory of wikt2dict:
-
-    cd ..
-
-Create all necessary directories (assuming you are using the default configurations):
-
-    mkdir -p dat/wiktionary dat/triangle log res/langnames
-
-You are ready to configure wikt2dict.
-
-
-## Configuration
-
-Set the list of Wiktionaries to work with.
-We provide an example configuration file, cfg/main.cfg, with the full
-configuration we used.
-We also provide a defaults.cfg file with default parameters.
-You can leave the configuration as it is if you do not want to parse an additional
-Wiktionary.
-
-### Resource files
-
-There are also example files in the res directory.
-
-* res/wikicodes: the list of Wiktionary codes you want to collect translations in.  
-   Right now this file contains all 50 languages we worked with.
-
-* res/wiktionaries.tsv: Wiktionary code - language name mapping for all Wiktionaries
-   you want to parse. This is a tab-separated file.
-
-## Parsing Wiktionaries
-You will now download and parse the Latin Wiktionary. The environment is already set up.
-We chose the Latin Wiktionary because it is small and for historical reasons, easy 
-to understand many words for most European-language speakers.
+    Usage:
+      w2d.py (download|extract|triangulate|all) (--wikicodes=file|<wc>...)
     
-Create a langdirs.tsv containing nothing but the entity for the Latin Wiktionary.
+    Options:
+      -h --help              Show this screen.
+      --version              Show version.
+      -w, --wikicodes=file   File containing a list of wikicodes.
 
-    grep Latin res/wiktionaries-full.tsv > res/wiktionaries.tsv
+W2d.py currently supports 3+1 actions. All actions need a list of Wiktionary codes to work with.
+You can either list the codes manually or provide them in a file (--wikicodes option).
 
-Download the Wiktionary:
+The actions are:
 
-    cd bin
+1. download: download the Wiktionary dumps. Convert them from XML to plaintext with a special page separator.
+The files are saved in the directory specified in config.py:wiktionary\_defaults['dump\_path\_base'].
+The default is wikt2dict/dat/wiktionary/<language name>
+1. extract: extract translations.
+The translations are saved to the file specified in config.py:wiktionary\_defaults['output\_path'].
+By default this file is wikt2dict/dat/wiktionary/<language name>/translation\_pairs.
+1. triangulate: use triangulation to generate more translations.
+Triangles are saved to the directory config.py:wiktionary\_defaults['triangle\_dir'] in separate files
+named as <wc1>\_<wc2>\_<wc3>. This file would contain pairs in wc1-wc3 languages triangulated via wc2.
+For more information on triangulating, see: http://aclweb.org/anthology/W/W13/W13-2507.pdf
+Note that triangulating only makes sense if you specify at least 3 languages.
+1. all: do all of the above.
 
-    bash download_wiktionaries.sh  ../res/wiktionaries.tsv ../dat/wiktionary
-
-After the download finishes,
-a Latin directory is created in ../dat/wiktionary and the dump should be there.
-For downloading more than one Wiktionaries, you need to specify all languages in 
-the langnames.tsv file one language-per-line.
-
-If the download fails for some reason, delete the corrupted file before running it again:
-
-    rm ../dat/wiktionary/Latin/lawiktionary-latest-pages-meta-current.xml
-
-Convert to plain text:
-
-    bash wiktionary2text.sh ../res/wiktionaries.tsv ../dat/wiktionary
-
-This command should produce the file: ../dat/wiktionary/Latin/lawiktionary.txt
-
-Extract translations using the previously set up configuration:
-
-    python extract_translations.py ../cfg/w2d.cfg la
-
-The last parameter tells wikt2dict to extract the Latin Wiktionary.
-
-It is possible for run all Wiktionaries in the res/wikicodes file using the `all' parameter.
-
-    python extract_translations.py ../cfg/w2d.cfg all
-
-Repeat the steps 1-4. with at least two other Wiktionaries of your choice. 
-Preferrably chose Wiktionaries that have a full section in the cfg/w2d.cfg file.
-
-## Triangulating
-
-Now you are ready to try the triangulating. This is done by calling:
-
-    python triangulate.py ../cfg/w2d.cfg
-
-The output is saved in the ../dat/triangle directory by default. You can change this of course.
-You can limit the triangulating to a certain languages.
-For example calling:
-    python triangulate.py ../cfg/w2d.cfg la
-
-would only run triangulating for triangles that contain Latin and skip the others.
 
 ## Output
 
@@ -156,11 +97,11 @@ The one extracted from the Wiktionaries has the following columns:
 4. Word or expression in language 2
 5. Wiktionary code of the Wiktionary from which the pair was extracted
 6. Article from which the pair was extracted
-7. 0 or 1 indicating whether the other word has an article in the Wiktionary
+7. Type of parser used (you probably don't need this)
 
 An example:
 
-    en      dog     fr      chien   en      dog     1
+    en      dog     fr      chien   en      dog     defaultparser
 
 The triangulating output has the following columns:
 
@@ -176,7 +117,7 @@ The pairs are listed with all possible ways they were found. I provided a little
 sort, unify and count the number of times one pair appears.
 Usage:
 
-    cat triangle_files | bash merge_triangle.sh > output_file
+    cat triangle_files | bash bin/merge_triangle.sh > output_file
 
 To use with all triangle files:
 
