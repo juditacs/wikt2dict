@@ -2,7 +2,7 @@
 Wikt2Dict
 
 Usage:
-  w2d.py (download|extract|triangulate) (--wikicodes=file|<wc>...)
+  w2d.py (download|extract|triangulate|all) (--wikicodes=file|<wc>...)
 
 Options:
   -h --help              Show this screen.
@@ -66,11 +66,11 @@ def main():
             wc_set = set([l.strip() for l in f])
     else:
         wc_set = set(arguments['<wc>'])
-    if arguments['download']:
+    if arguments['download'] or arguments['all']:
         download_wiktionaries(wc_set)
-    if arguments['extract']:
+    if arguments['extract'] or arguments['all']:
         extract_translations(wc_set)
-    if arguments['triangulate']:
+    if arguments['triangulate'] or arguments['all']:
         triangulate(wc_set)
 
 if __name__ == '__main__':
