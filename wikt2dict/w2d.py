@@ -2,7 +2,7 @@
 Wikt2Dict
 
 Usage:
-  w2d.py (download|textify|extract|triangulate) (--wikicodes=file|<wc>...)
+  w2d.py (download|extract|triangulate) (--wikicodes=file|<wc>...)
 
 Options:
   -h --help              Show this screen.
@@ -12,6 +12,9 @@ Options:
 from docopt import docopt
 from sys import stderr
 from itertools import combinations
+from urllib import urlretrieve
+from os import path
+from subprocess import call
 import logging
 
 from wikt2dict.wiktionary import Wiktionary
@@ -24,8 +27,14 @@ logger.setLevel(logging.INFO)
 
 
 def download_wiktionaries(wc_set):
-    # TODO
     logger.info('Downloading Wiktionaries')
+    to_download = filter(lambda c: c.wc in wc_set, config.configs)
+    for cfg in to_download:
+        logger.info(cfg.dump_url)
+        urlretrieve(cfg.dump_url, cfg.bz2_path)
+        wiki_textify_path = path.join(config.base_dir, 'external/articles.py')
+        call(['bzcat {0} | python {1} > {2}'.format(
+            cfg.bz2_path, wiki_textify_path, cfg.dump_path)], shell=True)
 
 
 def extract_translations(wc_set):
