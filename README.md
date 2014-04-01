@@ -8,6 +8,9 @@ generate new ones.
 
 ## News
 
+Wikt2dict changed completely, hope for the better. If you would like to keep using the old one:
+https://github.com/juditacs/wikt2dict/tree/a08cc896c22dc78db62e1b790c3ec157d00ad08f
+
 * Changed interface. See below for details (April 2014)
 * Added support for German Wiktionary (Aug 2013)
 * Had a poster at the Building and Using Comparable Corpora Workshop (BUCC) at ACL13, updated Bibtex accordingly
