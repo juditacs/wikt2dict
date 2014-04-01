@@ -83,7 +83,6 @@ class WiktionaryConfig(DictLikeClass):
         self._parsers = None
         self._parser_configs = None
         self._wikicodes = None
-        self.wc = None
 
     @property
     def wikicodes(self):
@@ -270,7 +269,7 @@ class EstonianConfig(LangnamesWiktionaryConfig):
         self.full_name = 'Estonian'
         self.wc = 'et'
         self.langnames_cfg = {
-            'langnames': path.join(base_dir, 'res/langnames/estonian'),
+            'langnames': path.join(base_dir, '../res/langnames/estonian'),
             'translation_line': r'\*\s*([^\s:]+)\s*:(.*)',
         }
         super(EstonianConfig, self).__init__()
@@ -282,7 +281,7 @@ class PolishConfig(LangnamesWiktionaryConfig):
         self.full_name = 'Polish'
         self.wc = 'pl'
         self.langnames_cfg = {
-            'langnames': path.join(base_dir, 'res/langnames/polish'),
+            'langnames': path.join(base_dir, '../res/langnames/polish'),
             'translation_line': r'\*\s*(.*):\s*((\([^\)]*)?\s*(.*))',
             'trim_re': r'<!--.*(?=-->)-->',
             'translation_entity_delimiter': r',\|;',
@@ -317,7 +316,7 @@ class SlovenianConfig(LangnamesWiktionaryConfig):
         self.full_name = 'Slovenian'
         self.wc = 'sl'
         self.langnames_cfg = {
-            'langnames': path.join(base_dir, 'res/langnames/slovenian'),
+            'langnames': path.join(base_dir, '../res/langnames/slovenian'),
             'translation_line': r'\*\s*([^\s:]+)\s*:(.*)',
             'translation_entity_delimiter': r',\|;',
         }
@@ -330,7 +329,7 @@ class MalagasyConfig(LangnamesWiktionaryConfig):
         self.full_name = 'Malagasy'
         self.wc = 'mg'
         self.langnames_cfg = {
-            'langnames': path.join(base_dir, 'res/langnames/malagasy'),
+            'langnames': path.join(base_dir, '../res/langnames/malagasy'),
             'translation_line': r'\#\s*([^\s:]+)\s*:(.*)',
         }
         super(MalagasyConfig, self).__init__()
@@ -342,7 +341,7 @@ class HebrewConfig(LangnamesWiktionaryConfig):
         self.full_name = 'Hebrew'
         self.wc = 'he'
         self.langnames_cfg = {
-            'langnames': path.join(base_dir, 'res/langnames/hebrew'),
+            'langnames': path.join(base_dir, '../res/langnames/hebrew'),
             'translation_line': ur'{{\u05ea\|([^|}]+)\|([^}]+)}}',
             'translation_re': re.compile(r'([^|]+)', re.UNICODE),
         }
@@ -407,7 +406,7 @@ class FinnishConfig(LangnamesWiktionaryConfig):
         self.full_name = 'Finnish'
         self.wc = 'fi'
         self.langnames_cfg = {
-            'langnames': path.join(base_dir, 'res/langnames/finnish'),
+            'langnames': path.join(base_dir, '../res/langnames/finnish'),
             'translation_line': r'\*\{{0,2}([^}]+)\}{0,2}:\s*(.*)',
         }
         super(FinnishConfig, self).__init__()
@@ -493,7 +492,7 @@ class GermanConfig(SectionLevelWiktionaryConfig):
         ]
         section_cfg = {
             'parsers': [[DefaultArticleParser, DefaultParserConfig, default_cfg]],
-            'section_langmap': path.join(base_dir, 'res/langnames/german'),
+            'section_langmap': path.join(base_dir, '../res/langnames/german'),
             'section_re': re.compile(r'==.*\(\{\{[Ss]prache\|(.+)\}\}\)\s*==', re.UNICODE),
         }
         self._parser_configs = [

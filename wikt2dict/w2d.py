@@ -47,7 +47,7 @@ def extract_translations(wc_set):
 
 
 def triangulate(wc_set):
-    n = 53
+    n = len(wc_set)
     num_of_tr = n * (n - 1) * (n - 2) / 6
     i = 1
     for triangle_wc in combinations(wc_set, 3):
