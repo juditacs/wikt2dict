@@ -83,6 +83,7 @@ class WiktionaryConfig(DictLikeClass):
         self._parsers = None
         self._parser_configs = None
         self._wikicodes = None
+        self.wc = None
 
     @property
     def wikicodes(self):
@@ -90,6 +91,16 @@ class WiktionaryConfig(DictLikeClass):
             with open(self.wikicodes_file) as f:
                 self._wikicodes = set([l.strip() for l in f])
         return self._wikicodes
+
+    @property
+    def dump_url(self):
+        return 'http://dumps.wikimedia.org/{0}wiktionary' \
+               '/latest/{0}wiktionary-latest-pages-meta-current.xml.bz2'.format(
+                   self.wc)
+
+    @property
+    def bz2_path(self):
+        return path.join(self.dump_path_base, self.wc + '.bz2')
 
     @property
     def dump_filename(self):
