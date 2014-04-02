@@ -99,9 +99,10 @@ class WiktionaryConfig(DictLikeClass):
 
     @property
     def bz2_path(self):
-        if not path.exists(self.dump_path):
-            makedirs(self.dump_path)
-        return path.join(self.dump_path, self.wc + '.bz2')
+        path_dir = path.join(self.dump_path_base, self.full_name)
+        if not path.exists(path_dir):
+            makedirs(path_dir)
+        return path.join(path_dir, self.wc + '.bz2')
 
     @property
     def dump_filename(self):
