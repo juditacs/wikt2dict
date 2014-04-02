@@ -28,7 +28,8 @@ For all Wiktionary editions supported, you need about 35GB of free space.
 ## Installation
 
     git clone https://github.com/juditacs/wikt2dict.git
-    sudo pip intall wikt2dict
+    cd wikt2dict
+    sudo pip install -e .
 
 You can install wikt2dict in virtualenv if you do not have root access.
 
@@ -37,7 +38,8 @@ A very quick guide to virtualenv:
     virtualenv w2d_env
     source w2d_env/bin/activate
     git clone https://github.com/juditacs/wikt2dict.git
-    pip intall wikt2dict
+    cd wikt2dict
+    pip install -e .
 
 Note that this way wikt2dict can only be used once the virtualenv was activated.
 You need to run source w2d\_env/bin/activate every time you login.
@@ -75,6 +77,31 @@ For more information on triangulating, see: http://aclweb.org/anthology/W/W13/W1
 Note that triangulating only makes sense if you specify at least 3 languages.
 1. all: do all of the above.
 
+Let's try it out on a few small Wiktionary editions.
+
+Downloading the Slovak, the Slovenian and the Occitan Wiktionaries:
+
+    w2d.py download sk sl li
+
+The downloaded and textified Wiktionaries should appear in dat/wiktionary/<language name>/<wikicode>wiktionary.txt
+
+Extracting translations:
+
+    w2d.py extract sk sl li
+
+The extracted translations should appear in dat/wiktionary/<language name>/translation\_pairs.
+
+Now let's try triangulating to get a bunch of new translations:
+
+    w2d.py triangulate sk sl li
+
+The results should appear in dat/triangle/ arranged in subdirectories with a maximum of 1000 files per directory
+to avoid filesystem problems.
+Using only 3 such small editions for triangulating does not make much sense (it yielded 4 pairs on the April 2014 dumps).
+
+Or do all of it at once:
+
+    w2d.py all sk sl li
 
 ## Output
 
