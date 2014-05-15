@@ -145,13 +145,13 @@ The triangulating output has the following columns:
 
 The pairs are listed with all possible ways they were found. I provided a little script to 
 sort, unify and count the number of times one pair appears.
-Usage:
+Usage (from wikt2dict base directory):
 
-    cat triangle_files | bash bin/merge_triangle.sh > output_file
+    cat <triangle_files_to_merge> | bash bin/merge_triangle.sh > output_file
 
 To use with all triangle files:
 
-    cat <triangle_dir>/*/* | bash merge_triangle.sh > output_file
+    cat <triangle_dir>/*/* | bash bin/merge_triangle.sh > output_file
 
 where the <triangle\_dir> should be replaced with the directory where the individual triangle files are
 stored (triangle\_dir option).
