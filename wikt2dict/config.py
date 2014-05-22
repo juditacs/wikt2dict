@@ -693,6 +693,7 @@ class SpanishConfig(DefaultWiktionaryConfig):
         self.wc = 'es'
         self.default_cfg = {
             'translation_prefix': r'(?:trad|t)[\u00f8\+\-]?',
+            'placeholder': '[\d\?]',
         }
         super(SpanishConfig, self).__init__()
 
