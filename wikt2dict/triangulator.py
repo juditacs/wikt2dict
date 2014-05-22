@@ -21,7 +21,7 @@ class Triangulator(object):
                 cfg = config.get_config_by_wc(wc)
                 self.read_pairs_in_lang(wc, cfg.output_path)
             except IndexError:
-                pass
+                continue
 
     def read_pairs_in_lang(self, wc, fn):
         if not path.exists(fn):
@@ -39,10 +39,8 @@ class Triangulator(object):
                     wc2 = 'zh'
                 if not wc1 in self.wikicodes and not wc2 in self.wikicodes:
                     continue
-                if wc1 < wc2:
-                    self.pairs[wc1][w1][wc2][w2].append((src_wc, src_art))
-                else:
-                    self.pairs[wc2][w2][wc1][w1].append((src_wc, src_art))
+                self.pairs[wc1][w1][wc2][w2].append((src_wc, src_art))
+                self.pairs[wc2][w2][wc1][w1].append((src_wc, src_art))
 
     def collect_triangles(self):
         for wc2 in self.wikicodes:  # this is the bridge language
