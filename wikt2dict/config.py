@@ -324,6 +324,18 @@ class SlovenianConfig(LangnamesWiktionaryConfig):
         super(SlovenianConfig, self).__init__()
 
 
+class SomaliConfig(SlovenianConfig):
+
+    def __init__(self):
+        super(SomaliConfig, self).__init__()
+        self.full_name = 'Somali'
+        self.wc = 'so'
+        self.langnames_cfg = {
+            'translation_line': r'\*\s*([^\s:]+)\s*:(.*)',
+            'translation_entity_delimiter': r',\|;',
+        }
+
+
 class MalagasyConfig(LangnamesWiktionaryConfig):
 
     def __init__(self):
@@ -798,6 +810,7 @@ configs = [
     SerbianConfig(),
     SlovakConfig(),
     SlovenianConfig(),
+    SomaliConfig(),
     SpanishConfig(),
     SwahiliConfig(),
     SwedishConfig(),
