@@ -368,7 +368,7 @@ class IdoConfig(LangnamesWiktionaryConfig):
         self.wc = 'io'
         self.langnames_cfg = {
             'langnames': False,
-            'translation_line': r'\*\s*\{{([^}]+)}}:\s*(.+)',
+            'translation_line': r'\*\s*\{{([^{}]+)}}:\s*([^\n]+)',
             'skip_translation': r'\*:\s*',
         }
         super(IdoConfig, self).__init__()
