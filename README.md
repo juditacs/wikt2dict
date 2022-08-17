@@ -14,7 +14,7 @@ https://github.com/juditacs/wikt2dict/tree/a08cc896c22dc78db62e1b790c3ec157d00ad
 * Changed interface. See below for details (April 2014)
 * Added support for German Wiktionary (Aug 2013)
 * Had a poster at the Building and Using Comparable Corpora Workshop (BUCC) at ACL13, updated Bibtex accordingly
-  * The paper is available here: http://www.aclweb.org/anthology-new/W/W13/W13-2507.pdf
+  * The paper is available here: http://www.aclweb.org/anthology/W/W13/W13-2507.pdf
 * <s>All dictionaries are available here: http://nessie.nytud.hu/dict</s>
 
 ## Requirements
