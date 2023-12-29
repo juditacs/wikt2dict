@@ -489,6 +489,14 @@ class EnglishConfig(DefaultWiktionaryConfig):
         super(EnglishConfig, self).__init__()
 
 
+class TamilConfig(DefaultWiktionaryConfig):
+
+    def __init__(self):
+        self.full_name = 'Tamil'
+        self.wc = 'ta'
+        super(TamilConfig, self).__init__()
+
+
 class GermanConfig(SectionLevelWiktionaryConfig):
 
     def __init__(self):
@@ -814,6 +822,7 @@ configs = [
     SpanishConfig(),
     SwahiliConfig(),
     SwedishConfig(),
+    TamilConfig(),
     TurkishConfig(),
     UkranianConfig(),
     VietnameseConfig(),
